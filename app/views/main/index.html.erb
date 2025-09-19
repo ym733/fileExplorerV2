@@ -1,3 +1,169 @@
-<div class="d-flex align-items-center justify-content-center">
-    <h1>WELCOME!!!</h1>
+<div class="file-explorer-container">
+    <!-- Sidebar for directory tree -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h3>Directory Tree</h3>
+            <button class="btn btn-sm btn-outline-secondary" id="refresh-tree">
+                <i class="fas fa-sync-alt"></i> Refresh
+            </button>
+        </div>
+
+        <div class="directory-tree" id="directory-tree">
+            <!-- Directory tree will be populated here -->
+            <div class="tree-item root-item" data-path="/">
+                <span class="tree-toggle">
+                    <i class="fas fa-chevron-right"></i>
+                </span>
+                <i class="fas fa-folder text-warning"></i>
+                <span class="tree-label">Root Directory</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content area -->
+    <div class="main-content">
+        <div class="toolbar">
+            <div class="breadcrumb-container">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb" id="breadcrumb-nav">
+                        <li class="breadcrumb-item active">
+                            <i class="fas fa-home"></i> Home
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+
+            <div class="toolbar-actions">
+                <button class="btn btn-outline-primary btn-sm" id="create-folder">
+                    <i class="fas fa-folder-plus"></i> New Folder
+                </button>
+                <button class="btn btn-outline-success btn-sm" id="upload-file">
+                    <i class="fas fa-upload"></i> Upload
+                </button>
+                <div class="view-toggle btn-group" role="group">
+                    <button class="btn btn-outline-secondary btn-sm active" data-view="grid">
+                        <i class="fas fa-th"></i>
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm" data-view="list">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="file-grid" id="file-grid">
+            <!-- Files and folders will be populated here -->
+            <% if @files.present? %>
+            <% @files.each do |file| %>
+            <div class="file-item <%= file[:type] %>" data-path="<%= file[:path] %>">
+                <div class="file-icon">
+                    <% if file[:type] == 'folder' %>
+                    <i class="fas fa-folder text-warning fa-3x"></i>
+                    <% else %>
+                    <% case file[:extension] %>
+                    <% when '.pdf' %>
+                    <i class="fas fa-file-pdf text-danger fa-3x"></i>
+                    <% when '.doc', '.docx' %>
+                    <i class="fas fa-file-word text-primary fa-3x"></i>
+                    <% when '.xls', '.xlsx' %>
+                    <i class="fas fa-file-excel text-success fa-3x"></i>
+                    <% when '.jpg', '.jpeg', '.png', '.gif' %>
+                    <i class="fas fa-file-image text-info fa-3x"></i>
+                    <% when '.zip', '.rar' %>
+                    <i class="fas fa-file-archive text-secondary fa-3x"></i>
+                    <% else %>
+                    <i class="fas fa-file text-muted fa-3x"></i>
+                    <% end %>
+                    <% end %>
+                </div>
+                <div class="file-name"><%= file[:name] %></div>
+                <div class="file-size"><%= file[:size] if file[:size] %></div>
+                <div class="file-date"><%= file[:modified] if file[:modified] %></div>
+
+                <div class="file-actions">
+                    <button class="btn btn-sm btn-outline-primary" title="Download">
+                        <i class="fas fa-download"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" title="Delete">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+            <% end %>
+            <% else %>
+            <div class="empty-state">
+                <i class="fas fa-folder-open fa-5x text-muted"></i>
+                <h4>This folder is empty</h4>
+                <p>Upload files or create new folders to get started.</p>
+            </div>
+            <% end %>
+        </div>
+
+        <!-- List view (initially hidden) -->
+        <div class="file-list d-none" id="file-list">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Size</th>
+                        <th>Modified</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- List items will be populated here via JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- File Upload Modal -->
+<div class="modal fade" id="uploadModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Upload Files</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <%= form_with url: "file.txt", multipart: true, local: false, id: "upload-form" do |form| %>
+                <div class="mb-3">
+                    <%= form.file_field :files, multiple: true, class: "form-control", accept: "*/*" %>
+                </div>
+                <div class="progress d-none" id="upload-progress">
+                    <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                </div>
+                <% end %>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="upload-submit">Upload</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create Folder Modal -->
+<div class="modal fade" id="createFolderModal" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create New Folder</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <%= form_with url: "folder", local: false, id: "folder-form" do |form| %>
+                <div class="mb-3">
+                    <%= form.text_field :folder_name, class: "form-control", placeholder: "Folder name", required: true %>
+                    <%= form.hidden_field :current_path, value: @current_path %>
+                </div>
+                <% end %>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="folder-submit">Create</button>
+            </div>
+        </div>
+    </div>
 </div>
