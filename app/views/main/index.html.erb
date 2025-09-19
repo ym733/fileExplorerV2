@@ -10,13 +10,7 @@
 
         <div class="directory-tree" id="directory-tree">
             <!-- Directory tree will be populated here -->
-            <div class="tree-item root-item" data-path="/">
-                <span class="tree-toggle">
-                    <i class="fas fa-chevron-right"></i>
-                </span>
-                <i class="fas fa-folder text-warning"></i>
-                <span class="tree-label">Root Directory</span>
-            </div>
+            <%= render "shared/directory_tree", tree: @tree %>
         </div>
     </div>
 
