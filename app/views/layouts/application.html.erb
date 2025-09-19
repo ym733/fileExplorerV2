@@ -26,18 +26,70 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 
     <style>
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-tertiary: #e9ecef;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --text-muted: #adb5bd;
+            --border-color: #dee2e6;
+            --shadow-color: rgba(0, 0, 0, 0.075);
+            --hover-bg: #f8f9fa;
+            --selected-bg: #cfe2ff;
+            --selected-border: #007bff;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #212529;
+            --bg-secondary: #343a40;
+            --bg-tertiary: #495057;
+            --text-primary: #f8f9fa;
+            --text-secondary: #adb5bd;
+            --text-muted: #6c757d;
+            --border-color: #495057;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --hover-bg: #343a40;
+            --selected-bg: #0d6efd;
+            --selected-border: #0a58ca;
+        }
+
+        body {
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            background-color: var(--bg-primary);
+            border: 2px solid var(--border-color);
+            border-radius: 50px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px var(--shadow-color);
+        }
+
         .file-explorer-container {
             display: flex;
             height: 100vh;
-            background-color: #f8f9fa;
+            background-color: var(--bg-secondary);
         }
 
         .sidebar {
             width: 300px;
-            background-color: white;
-            border-right: 1px solid #dee2e6;
+            background-color: var(--bg-primary);
+            border-right: 1px solid var(--border-color);
             padding: 1rem;
             overflow-y: auto;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
         .sidebar-header {
@@ -46,45 +98,21 @@
             align-items: center;
             margin-bottom: 1rem;
             padding-bottom: 0.5rem;
-            border-bottom: 1px solid #dee2e6;
+            border-bottom: 1px solid var(--border-color);
         }
 
         .sidebar-header h3 {
             margin: 0;
             font-size: 1.2rem;
-            color: #495057;
+            color: var(--text-primary);
         }
 
         .directory-tree {
             font-family: 'Courier New', monospace;
         }
 
-        .tree-item {
-            display: flex;
-            align-items: center;
-            padding: 0.25rem;
-            cursor: pointer;
-            border-radius: 0.25rem;
-            margin-bottom: 2px;
-        }
-
-        .tree-item:hover {
-            background-color: #e9ecef;
-        }
-
-        .tree-item.active {
-            background-color: #cfe2ff;
-        }
-
-        .tree-toggle {
-            width: 16px;
-            margin-right: 0.25rem;
-            cursor: pointer;
-        }
-
-        .tree-label {
-            margin-left: 0.5rem;
-            font-size: 0.9rem;
+        .text-themed-muted {
+            color: var(--text-muted) !important;
         }
 
         .main-content {
@@ -100,18 +128,10 @@
             align-items: center;
             margin-bottom: 1rem;
             padding: 1rem;
-            background-color: white;
+            background-color: var(--bg-primary);
             border-radius: 0.5rem;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-        }
-
-        .breadcrumb-container {
-            flex: 1;
-        }
-
-        .breadcrumb {
-            margin: 0;
-            background-color: transparent;
+            box-shadow: 0 0.125rem 0.25rem var(--shadow-color);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
         }
 
         .toolbar-actions {
@@ -125,93 +145,41 @@
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             gap: 1rem;
             padding: 1rem;
-            background-color: white;
+            background-color: var(--bg-primary);
             border-radius: 0.5rem;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            box-shadow: 0 0.125rem 0.25rem var(--shadow-color);
             overflow-y: auto;
             flex: 1;
-        }
-
-        .file-item {
-            position: relative;
-            padding: 1rem;
-            text-align: center;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border: 2px solid transparent;
-        }
-
-        .file-item:hover {
-            background-color: #f8f9fa;
-            transform: translateY(-2px);
-            border-color: #007bff;
-        }
-
-        .file-item.selected {
-            background-color: #cfe2ff;
-            border-color: #007bff;
-        }
-
-        .file-icon {
-            margin-bottom: 0.5rem;
-        }
-
-        .file-name {
-            font-weight: 500;
-            margin-bottom: 0.25rem;
-            word-break: break-word;
-            font-size: 0.9rem;
-        }
-
-        .file-size,
-        .file-date {
-            font-size: 0.75rem;
-            color: #6c757d;
-            margin-bottom: 0.25rem;
-        }
-
-        .file-actions {
-            position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-        }
-
-        .file-item:hover .file-actions {
-            opacity: 1;
-        }
-
-        .file-actions .btn {
-            margin-left: 0.25rem;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
         }
 
         .empty-state {
             grid-column: 1 / -1;
             text-align: center;
             padding: 3rem;
-            color: #6c757d;
+            color: var(--text-secondary);
         }
 
-        .file-list {
-            background-color: white;
-            border-radius: 0.5rem;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-            flex: 1;
-            overflow-y: auto;
+        .btn-outline-primary,
+        .btn-outline-secondary,
+        .btn-outline-success,
+        .btn-outline-danger {
+            border-color: var(--border-color);
+            color: var(--text-primary);
         }
 
-        .file-list table {
-            margin: 0;
+        .btn-outline-primary:hover,
+        .btn-outline-secondary:hover,
+        .btn-outline-success:hover,
+        .btn-outline-danger:hover {
+            background-color: var(--hover-bg);
         }
 
-        .file-list th {
-            border-top: none;
-            background-color: #f8f9fa;
-            position: sticky;
-            top: 0;
-            z-index: 10;
+        /* Dark mode specific button styles */
+        [data-theme="dark"] .btn-outline-primary:not(:disabled):not(.disabled):active,
+        [data-theme="dark"] .btn-outline-primary:not(:disabled):not(.disabled).active {
+            background-color: var(--selected-bg);
+            border-color: var(--selected-border);
         }
 
         .progress {
@@ -254,161 +222,45 @@
 </head>
 
 <body>
+    <!-- Theme Toggle Button -->
+    <div class="theme-toggle" id="themeToggle">
+        <span id="themeText">Light</span>
+    </div>
+
     <%= yield %>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // View toggle functionality
-            const viewToggleBtns = document.querySelectorAll('.view-toggle button');
-            const fileGrid = document.getElementById('file-grid');
-            const fileList = document.getElementById('file-list');
+            // Theme toggle functionality
+            const themeToggle = document.getElementById('themeToggle');
+            const themeText = document.getElementById('themeText');
+            const body = document.body;
 
-            viewToggleBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    viewToggleBtns.forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
+            // Check for saved theme preference or default to 'light'
+            const currentTheme = localStorage.getItem('theme') || 'light';
 
-                    const view = this.dataset.view;
-                    if (view === 'grid') {
-                        fileGrid.classList.remove('d-none');
-                        fileList.classList.add('d-none');
-                    } else {
-                        fileGrid.classList.add('d-none');
-                        fileList.classList.remove('d-none');
-                        populateListView();
-                    }
-                });
-            });
+            // Apply the theme on page load
+            if (currentTheme === 'dark') {
+                body.setAttribute('data-theme', 'dark');
+                themeToggle.classList.add('dark');
+                themeText.textContent = 'Dark';
+            }
 
-            // File selection
-            const fileItems = document.querySelectorAll('.file-item');
-            fileItems.forEach(item => {
-                item.addEventListener('click', function(e) {
-                    if (e.target.closest('.file-actions')) return;
-
-                    // Remove previous selection
-                    fileItems.forEach(i => i.classList.remove('selected'));
-                    // Add selection to current item
-                    this.classList.add('selected');
-                });
-
-                // Double click to navigate
-                item.addEventListener('dblclick', function() {
-                    if (this.classList.contains('folder')) {
-                        const path = this.dataset.path;
-                        window.location.href = `/?path=${encodeURIComponent(path)}`;
-                    }
-                });
-            });
-
-            // Upload modal
-            const uploadBtn = document.getElementById('upload-file');
-            const uploadModal = new bootstrap.Modal(document.getElementById('uploadModal'));
-            const uploadSubmit = document.getElementById('upload-submit');
-
-            uploadBtn.addEventListener('click', () => uploadModal.show());
-
-            uploadSubmit.addEventListener('click', function() {
-                const form = document.getElementById('upload-form');
-                const formData = new FormData(form);
-                const progressBar = document.querySelector('#upload-progress .progress-bar');
-                const progressContainer = document.getElementById('upload-progress');
-
-                progressContainer.classList.remove('d-none');
-
-                fetch(form.action, {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            uploadModal.hide();
-                            location.reload();
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Upload error:', error);
-                    });
-            });
-
-            // Create folder modal
-            const createFolderBtn = document.getElementById('create-folder');
-            const createFolderModal = new bootstrap.Modal(document.getElementById('createFolderModal'));
-            const folderSubmit = document.getElementById('folder-submit');
-
-            createFolderBtn.addEventListener('click', () => createFolderModal.show());
-
-            folderSubmit.addEventListener('click', function() {
-                const form = document.getElementById('folder-form');
-                const formData = new FormData(form);
-
-                fetch(form.action, {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            createFolderModal.hide();
-                            location.reload();
-                        }
-                    });
-            });
-
-            // Directory tree toggle
-            document.addEventListener('click', function(e) {
-                if (e.target.closest('.tree-toggle')) {
-                    const toggle = e.target.closest('.tree-toggle');
-                    const icon = toggle.querySelector('i');
-
-                    if (icon.classList.contains('fa-chevron-right')) {
-                        icon.classList.remove('fa-chevron-right');
-                        icon.classList.add('fa-chevron-down');
-                        // Load subdirectories here
-                    } else {
-                        icon.classList.remove('fa-chevron-down');
-                        icon.classList.add('fa-chevron-right');
-                    }
+            themeToggle.addEventListener('click', function() {
+                if (body.getAttribute('data-theme') === 'dark') {
+                    // Switch to light mode
+                    body.removeAttribute('data-theme');
+                    themeToggle.classList.remove('dark');
+                    themeText.textContent = 'Light';
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    // Switch to dark mode
+                    body.setAttribute('data-theme', 'dark');
+                    themeToggle.classList.add('dark');
+                    themeText.textContent = 'Dark';
+                    localStorage.setItem('theme', 'dark');
                 }
             });
-
-            function populateListView() {
-                const tbody = document.querySelector('#file-list tbody');
-                tbody.innerHTML = '';
-
-                fileItems.forEach(item => {
-                    const name = item.querySelector('.file-name').textContent;
-                    const size = item.querySelector('.file-size')?.textContent || '-';
-                    const date = item.querySelector('.file-date')?.textContent || '-';
-                    const isFolder = item.classList.contains('folder');
-
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-              <td>
-                <i class="fas fa-${isFolder ? 'folder text-warning' : 'file text-muted'} me-2"></i>
-                ${name}
-              </td>
-              <td>${size}</td>
-              <td>${date}</td>
-              <td>
-                <button class="btn btn-sm btn-outline-primary me-1" title="Download">
-                  <i class="fas fa-download"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-danger" title="Delete">
-                  <i class="fas fa-trash"></i>
-                </button>
-              </td>
-            `;
-                    tbody.appendChild(row);
-                });
-            }
         });
     </script>
 </body>

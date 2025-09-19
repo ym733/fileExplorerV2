@@ -9,17 +9,21 @@ class MainController < ApplicationController
 
         item_path = File.join(path, item)
 
+        #puts path.gsub("/", "_")
+
         if File.directory?(item_path)
           items << {
             name: item,
-            path: item_path,
+            path: path,
+            item_path: item_path,
             type: "directory",
             children: build_directory_tree(item_path)
           }
         else
           items << {
             name: item,
-            path: item_path,
+            path: path,
+            item_path: item_path,
             type: "file"
           }
         end

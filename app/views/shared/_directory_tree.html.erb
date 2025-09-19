@@ -1,7 +1,7 @@
 <ul class="directory-tree">
     <% tree.each do |item| %>
     <li class="<%= item[:type] %>">
-        <span class="name"><%= item[:name] %></span>
+        <span class="name text-nowrap"><%= item[:name] %></span>
         <% if item[:type] == 'directory' && item[:children]&.any? %>
         <%= render 'shared/directory_tree', tree: item[:children] %>
         <% end %>
