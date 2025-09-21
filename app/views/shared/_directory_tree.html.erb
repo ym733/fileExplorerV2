@@ -1,9 +1,18 @@
-<ul class="directory-tree">
+<ul class="directory-tree" id="<%= id %>">
     <% tree.each do |item| %>
-    <li class="<%= item[:type] %>">
-        <span class="name text-nowrap"><%= item[:name] %></span>
+    <li style="display: none;" class="<%= item[:type] %>">
+        <!-- <span class="name text-nowrap"><%= item[:name] %></span> -->
         <% if item[:type] == 'directory' && item[:children]&.any? %>
-        <%= render 'shared/directory_tree', tree: item[:children] %>
+
+        <%# DIRECTORIES GO HERE %>
+        <button class="btn btn-plain-text name text-nowrap" onclick="toggleListItems(`<%= item[:item_path].gsub('/', '_') %>`)"><%= item[:name] %></button>
+        <%= render 'shared/directory_tree', tree: item[:children], id: item[:item_path].gsub('/', '_') %>
+
+        <% else %>
+
+        <%# FILES GO HERE %>
+        <span class="name text-nowrap"><%= item[:name] %></span>
+
         <% end %>
     </li>
     <% end %>

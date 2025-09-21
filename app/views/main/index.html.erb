@@ -12,8 +12,9 @@
             <!-- Directory tree will be populated here -->
             <ul class="directory-tree">
                 <li class="directory">
-                    <span class="name text-nowrap">Root</span>
-                    <%= render "shared/directory_tree", tree: @tree %>
+                    <!-- <span class="name text-nowrap">Root</span> -->
+                    <button class="btn btn-plain-text name text-nowrap" onclick="toggleListItems('<%= Dir.pwd.gsub('/', '_') %>')">Root</button>
+                    <%= render "shared/directory_tree", tree: @tree, id: Dir.pwd.gsub('/', '_') %>
                 </li>
             </ul>
         </div>
@@ -42,3 +43,12 @@
         </div>
     </div>
 </div>
+
+<script>
+    function toggleListItems(id) {
+        const items = document.querySelectorAll(`#${id} > li`);
+        items.forEach(item => {
+            item.style.display = (item.style.display === "none") ? "list-item" : "none";
+        });
+    }
+</script>

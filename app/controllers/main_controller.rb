@@ -9,8 +9,6 @@ class MainController < ApplicationController
 
         item_path = File.join(path, item)
 
-        #puts path.gsub("/", "_")
-
         if File.directory?(item_path)
           items << {
             name: item,
@@ -32,5 +30,6 @@ class MainController < ApplicationController
     end
 
     @tree = build_directory_tree root_directory_path
+    # puts @tree
   end
 end
