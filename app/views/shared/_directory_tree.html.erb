@@ -1,11 +1,14 @@
 <ul class="directory-tree" id="<%= id %>">
     <% tree.each do |item| %>
-    <li style="display: none;" class="<%= item[:type] %>">
+    <li style="display: none; list-style-type: none;" class="<%= item[:type] %>">
         <!-- <span class="name text-nowrap"><%= item[:name] %></span> -->
         <% if item[:type] == 'directory' && item[:children]&.any? %>
 
         <%# DIRECTORIES GO HERE %>
-        <button class="btn btn-plain-text name text-nowrap" onclick="toggleListItems(`<%= item[:item_path].gsub('/', '_') %>`)"><%= item[:name] %></button>
+        <svg class="clickable-arrow" width="12" height="12" viewBox="0 0 12 12">
+            <path d="M4 2 L8 6 L4 10" stroke="#8a8a8a" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <button class="btn btn-plain-text name text-nowrap" onclick="toggleListItems(`<%= item[:item_path].gsub('/', '_') %>`); toggleArrow(this.previousElementSibling);"><%= item[:name] %></button>
         <%= render 'shared/directory_tree', tree: item[:children], id: item[:item_path].gsub('/', '_') %>
 
         <% else %>

@@ -11,9 +11,13 @@
         <div class="directory-tree" id="directory-tree">
             <!-- Directory tree will be populated here -->
             <ul class="directory-tree">
-                <li class="directory">
+                <li class="directory" style="list-style-type: none;">
                     <!-- <span class="name text-nowrap">Root</span> -->
-                    <button class="btn btn-plain-text name text-nowrap" onclick="toggleListItems('<%= Dir.pwd.gsub('/', '_') %>')">Root</button>
+                    <svg class="clickable-arrow" width=" 12" height="12" viewBox="0 0 12 12">
+                        <path d="M4 2 L8 6 L4 10" stroke="#8a8a8a" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+
+                    <button class="btn btn-plain-text name text-nowrap" onclick="toggleListItems('<%= Dir.pwd.gsub('/', '_') %>'); toggleArrow(this.previousElementSibling);">Root</button>
                     <%= render "shared/directory_tree", tree: @tree, id: Dir.pwd.gsub('/', '_') %>
                 </li>
             </ul>
@@ -50,5 +54,11 @@
         items.forEach(item => {
             item.style.display = (item.style.display === "none") ? "list-item" : "none";
         });
+    }
+
+    function toggleArrow(svg) {
+        const isDown = svg.dataset.down === 'true';
+        svg.dataset.down = !isDown;
+        svg.style.transform = isDown ? 'rotate(0deg)' : 'rotate(90deg)';
     }
 </script>
