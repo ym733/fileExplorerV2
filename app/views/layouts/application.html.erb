@@ -149,7 +149,6 @@
 
         .file-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             gap: 1rem;
             padding: 1rem;
             background-color: var(--bg-primary);
@@ -175,6 +174,13 @@
             font: inherit;
             cursor: pointer;
         }
+
+        textarea:focus {
+            outline: none;
+            box-shadow: none;
+            border: none;
+        }
+
 
         .btn-outline-primary,
         .btn-outline-secondary,

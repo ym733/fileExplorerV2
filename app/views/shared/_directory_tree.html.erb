@@ -14,8 +14,12 @@
         <% else %>
 
         <%# FILES GO HERE %>
-        <span class="name text-nowrap"><%= item[:name] %></span>
-
+        <%= button_to item[:name],
+            "/file",
+            method: :get,
+            params: { item_path: item[:item_path] },
+            class: "btn btn-plain-text name text-nowrap",
+            form: { data: { turbo_frame: "file-grid" } } %>
         <% end %>
     </li>
     <% end %>

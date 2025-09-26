@@ -17,8 +17,8 @@
                         <path d="M4 2 L8 6 L4 10" stroke="#8a8a8a" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
 
-                    <button class="btn btn-plain-text name text-nowrap" onclick="toggleListItems('<%= Dir.pwd.gsub('/', '_') %>'); toggleArrow(this.previousElementSibling);">Root</button>
-                    <%= render "shared/directory_tree", tree: @tree, id: Dir.pwd.gsub('/', '_') %>
+                    <button class="btn btn-plain-text name text-nowrap" onclick="toggleListItems('<%= Dir.home.gsub('/', '_') %>'); toggleArrow(this.previousElementSibling);">Root</button>
+                    <%= render "shared/directory_tree", tree: @tree, id: Dir.home.gsub('/', '_') %>
                 </li>
             </ul>
         </div>
@@ -26,8 +26,8 @@
 
     <!-- Main content area -->
     <div class="main-content">
-        <div class="toolbar">
-            <div class="toolbar-actions">
+        <div class="toolbar d-flex justify-content-between">
+            <div class="toolbar-actions d-flex">
                 <button class="btn btn-outline-primary btn-sm" id="create-folder">
                     <i class="fas fa-folder-plus"></i> New Folder
                 </button>
@@ -35,16 +35,22 @@
                     <i class="fas fa-upload"></i> Upload
                 </button>
             </div>
-        </div>
-
-        <div class="file-grid" id="file-grid">
-            <!-- Files and folders will be populated here -->
-            <div class="empty-state">
-                <i class="fas fa-folder-open fa-5x text-themed-muted"></i>
-                <h4>This folder is empty</h4>
-                <p>Upload files or create new folders to get started.</p>
+            <div class="ms-auto" id="save-button-div">
+                <button class="btn btn-outline-info btn-sm" id="save-button" style="display: none;">
+                    Save
+                </button>
             </div>
         </div>
+
+
+        <%= turbo_frame_tag "file-grid", class: "file-grid" do %>
+        <!-- Files and folders will be populated here -->
+        <div class="empty-state">
+            <i class="fas fa-folder-open fa-5x text-themed-muted"></i>
+            <h4>This folder is empty</h4>
+            <p>Upload files or create new folders to get started.</p>
+        </div>
+        <% end %>
     </div>
 </div>
 
