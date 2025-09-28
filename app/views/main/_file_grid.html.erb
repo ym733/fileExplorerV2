@@ -1,12 +1,36 @@
 <%= turbo_frame_tag "file-grid", class: "file-grid" do %>
 <% if @is_text %>
 <div class="file-grid" id="file-grid">
-    <textarea id="textInput" name="textInput" class="w-100 h-100 border-0 p-0 m-0 bg-transparent" style="font: inherit; color: inherit; background-color: transparent; resize: none;">
-<%= @text %>
-    </textarea>
+    <textarea id="text-input" name="text-input" class="w-100 h-100 border-0 p-0 m-0 bg-transparent" style="font: inherit; color: inherit; background-color: transparent; resize: none;"><%= @text %></textarea>
 </div>
 <script>
     document.getElementById('save-button').style.display = 'block';
+
+    function saveData() {
+        const itemPath = '<%= @item_path %>';
+        const textData = document.getElementById('text-input').value;
+
+        fetch('/save', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
+                },
+                body: JSON.stringify({
+                    item_path: itemPath,
+                    text_data: textData
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    showNotification(data.error, 'error');
+                } else {
+                    showNotification(data.message, 'success');
+                }
+
+            });
+    }
 </script>
 
 <% else %>

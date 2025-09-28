@@ -8,7 +8,6 @@ class MainController < ApplicationController
         item_path = File.join(path, item)
         next if item[0] == '.' && File.directory?(item_path) # rubocop:disable Style/StringLiterals
 
-        
         if File.directory?(item_path)
           items << {
             name: item,
@@ -55,8 +54,27 @@ class MainController < ApplicationController
 
     @is_text = text_file?(params[:item_path])
 
+    @item_path = params[:item_path]
+
     @text = File.read(params[:item_path])
 
     render partial: 'file_grid'
+  end
+
+  def save
+    text_data = params[:'text_data']
+    item_path = params[:'item_path']
+
+    if text_data.blank? || item_path.blank?
+      return render json: { error: "Error! Both 'text-data' and 'item-path' are required" }, status: :bad_request
+    end
+
+    begin
+      File.write(item_path, text_data)
+      render json: {  result: "Success!", message: "'#{item_path.split("/")[-1]}' saved successfully!" }, status: :ok
+    rescue => e
+      render json: { error: "Error! #{e.message}" }, status: :unprocessable_entity
+    end
+
   end
 end

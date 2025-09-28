@@ -6,4 +6,7 @@ Rails.application.routes.draw do
 
   # GET /file
   get '/file', to: "main#file"
+
+  #POST /save
+  post '/save', to: "main#save"
 end

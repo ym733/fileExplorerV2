@@ -12,7 +12,6 @@
             <!-- Directory tree will be populated here -->
             <ul class="directory-tree">
                 <li class="directory" style="list-style-type: none;">
-                    <!-- <span class="name text-nowrap">Root</span> -->
                     <svg class="clickable-arrow" width=" 12" height="12" viewBox="0 0 12 12">
                         <path d="M4 2 L8 6 L4 10" stroke="#8a8a8a" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
@@ -28,17 +27,18 @@
     <div class="main-content">
         <div class="toolbar d-flex justify-content-between">
             <div class="toolbar-actions d-flex">
-                <button class="btn btn-outline-primary btn-sm" id="create-folder">
+                <button class="btn btn-outline-secondary btn-sm" id="create-folder">
                     <i class="fas fa-folder-plus"></i> New Folder
                 </button>
-                <button class="btn btn-outline-success btn-sm" id="upload-file">
+                <button class="btn btn-outline-secondary btn-sm" id="create-folder">
+                    <i class="fa-solid fa-file-circle-plus"></i> New File
+                </button>
+                <button class="btn btn-outline-secondary btn-sm" id="upload-file">
                     <i class="fas fa-upload"></i> Upload
                 </button>
             </div>
             <div class="ms-auto" id="save-button-div">
-                <button class="btn btn-outline-info btn-sm" id="save-button" style="display: none;">
-                    Save
-                </button>
+                <button id="save-button" class="btn btn-outline-info btn-sm" onclick="saveData()">Save</button>
             </div>
         </div>
 
@@ -66,5 +66,54 @@
         const isDown = svg.dataset.down === 'true';
         svg.dataset.down = !isDown;
         svg.style.transform = isDown ? 'rotate(0deg)' : 'rotate(90deg)';
+    }
+
+    // Function to show notification
+    function showNotification(message, type) {
+        // Remove any existing notification
+        let existingNotification = document.querySelector('[data-notification="true"]');
+        if (existingNotification) {
+            existingNotification.remove();
+        }
+
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.setAttribute('data-notification', 'true');
+        notification.textContent = message;
+
+        // Set styles individually to avoid any parsing issues
+        notification.style.position = 'fixed';
+        notification.style.bottom = '20px';
+        notification.style.left = '50%';
+        notification.style.transform = 'translateX(-50%)';
+        notification.style.padding = '12px 20px';
+        notification.style.borderRadius = '6px';
+        notification.style.color = 'white';
+        notification.style.fontWeight = '500';
+        notification.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+        notification.style.zIndex = '1000';
+        notification.style.minWidth = '200px';
+        notification.style.textAlign = 'center';
+        notification.style.opacity = '0';
+        notification.style.transition = 'all 0.3s ease';
+        notification.style.backgroundColor = type === 'error' ? '#ef4444' : '#10b981';
+
+        // Add to page
+        document.body.appendChild(notification);
+
+        // Show notification
+        setTimeout(function() {
+            notification.style.opacity = '1';
+        }, 10);
+
+        // Hide after 4 seconds
+        setTimeout(function() {
+            notification.style.opacity = '0';
+            setTimeout(function() {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 300);
+        }, 4000);
     }
 </script>
