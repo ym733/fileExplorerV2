@@ -9,4 +9,6 @@ config/credentials/*.yml.enc diff=rails_credentials
 config/credentials.yml.enc diff=rails_credentials
 
 #ignore HTML files
-views/* linguist-documentation
+*.html linguist-detectable=false
+*.erb linguist-detectable=false
+*.html.erb linguist-detectable=false
