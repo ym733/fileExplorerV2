@@ -1,13 +1,24 @@
 <ul class="directory-tree" id="<%= id %>">
     <% tree.each do |item| %>
     <li style="display: none; list-style-type: none;" class="<%= item[:type] %>">
-        <% if item[:type] == 'directory' && item[:children]&.any? %>
+        <% if item[:type] == 'directory' %>
 
         <%# DIRECTORIES GO HERE %>
-        <svg class="clickable-arrow" width="12" height="12" viewBox="0 0 12 12">
+        <svg class="clickable-arrow" width="12" height="12" viewBox="0 0 12 12" onclick="toggleListItems(`<%= item[:item_path].gsub('/', '_') %>`); toggleArrow(this);">
             <path d="M4 2 L8 6 L4 10" stroke="#8a8a8a" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
-        <button class="btn btn-plain-text name text-nowrap" onclick="toggleListItems(`<%= item[:item_path].gsub('/', '_') %>`); toggleArrow(this.previousElementSibling);"><%= item[:name] %></button>
+        <%= button_to item[:name],
+            "/folder",
+            method: :get,
+            params: {
+                item_path: item[:item_path],
+                children_name: item[:children].map { |child| child[:name] },
+                children_path: item[:children].map { |child| child[:item_path] },
+                children_type: item[:children].map { |child| child[:type] },
+            },
+            class: "btn btn-plain-text name text-nowrap",
+            form: { data: { turbo_frame: "file-grid" } }
+        %>
         <%= render 'shared/directory_tree', tree: item[:children], id: item[:item_path].gsub('/', '_') %>
 
         <% else %>

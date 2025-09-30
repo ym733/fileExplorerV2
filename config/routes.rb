@@ -7,6 +7,9 @@ Rails.application.routes.draw do
   # GET /file
   get '/file', to: "main#file"
 
+  # GET /folder
+  get '/folder', to: "main#folder"
+
   #POST /save
   post '/save', to: "main#save"
 end

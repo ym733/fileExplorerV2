@@ -12,11 +12,22 @@
             <!-- Directory tree will be populated here -->
             <ul class="directory-tree">
                 <li class="directory" style="list-style-type: none;">
-                    <svg class="clickable-arrow" width=" 12" height="12" viewBox="0 0 12 12">
+                    <svg class="clickable-arrow" width=" 12" height="12" viewBox="0 0 12 12" onclick="toggleListItems('<%= Dir.home.gsub('/', '_') %>'); toggleArrow(this.previousElementSibling);">
                         <path d="M4 2 L8 6 L4 10" stroke="#8a8a8a" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
 
-                    <button class="btn btn-plain-text name text-nowrap" onclick="toggleListItems('<%= Dir.home.gsub('/', '_') %>'); toggleArrow(this.previousElementSibling);">Root</button>
+                    <%= button_to "Root",   
+                        "/folder",
+                        method: :get,
+                        params: {
+                            item_path: Dir.home,
+                            children_name: @tree.map { |child| child[:name] },
+                            children_path: @tree.map { |child| child[:item_path] },
+                            children_type: @tree.map { |child| child[:type] },
+                        },
+                        class: "btn btn-plain-text name text-nowrap",
+                        form: { data: { turbo_frame: "file-grid" } }
+                    %>
                     <%= render "shared/directory_tree", tree: @tree, id: Dir.home.gsub('/', '_') %>
                 </li>
             </ul>
@@ -27,18 +38,18 @@
     <div class="main-content">
         <div class="toolbar d-flex justify-content-between">
             <div class="toolbar-actions d-flex">
-                <button class="btn btn-outline-secondary btn-sm" id="create-folder">
+                <button class="btn btn-outline-secondary btn-sm" id="create-folder" style="display:none;">
                     <i class="fas fa-folder-plus"></i> New Folder
                 </button>
-                <button class="btn btn-outline-secondary btn-sm" id="create-folder">
+                <button class="btn btn-outline-secondary btn-sm" id="create-file" style="display:none;">
                     <i class="fa-solid fa-file-circle-plus"></i> New File
                 </button>
-                <button class="btn btn-outline-secondary btn-sm" id="upload-file">
+                <button class="btn btn-outline-secondary btn-sm" id="upload-file" style="display:none;">
                     <i class="fas fa-upload"></i> Upload
                 </button>
             </div>
             <div class="ms-auto" id="save-button-div">
-                <button id="save-button" class="btn btn-outline-info btn-sm" onclick="saveData()">Save</button>
+                <button id="save-button" class="btn btn-outline-info btn-sm" onclick="saveData()" style="display:none;">Save</button>
             </div>
         </div>
 

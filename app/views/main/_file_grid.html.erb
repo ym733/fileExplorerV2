@@ -5,6 +5,9 @@
 </div>
 <script>
     document.getElementById('save-button').style.display = 'block';
+    document.getElementById('upload-file').style.display = 'none';
+    document.getElementById('create-file').style.display = 'none';
+    document.getElementById('create-folder').style.display = 'none';
 
     function saveData() {
         const itemPath = '<%= @item_path %>';
@@ -48,6 +51,9 @@
 </div>
 <script>
     document.getElementById('save-button').style.display = 'none';
+    document.getElementById('upload-file').style.display = 'none';
+    document.getElementById('create-file').style.display = 'none';
+    document.getElementById('create-folder').style.display = 'none';
 </script>
 <% end %>
 <% end %>

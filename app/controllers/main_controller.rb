@@ -11,7 +11,6 @@ class MainController < ApplicationController
         if File.directory?(item_path)
           items << {
             name: item,
-            path: path,
             item_path: item_path,
             type: "directory",
             children: build_directory_tree(item_path)
@@ -19,7 +18,6 @@ class MainController < ApplicationController
         else
           items << {
             name: item,
-            path: path,
             item_path: item_path,
             type: "file"
           }
@@ -56,9 +54,25 @@ class MainController < ApplicationController
 
     @item_path = params[:item_path]
 
-    @text = File.read(params[:item_path])
+    if @is_text
+      @text = File.read(params[:item_path])
+    end
 
-    render partial: 'file_grid'
+    render partial: "file_grid"
+  end
+
+  def folder
+    @children = []
+    @is_empty = params[:children_name].nil?
+    @item_path = params[:item_path]
+
+    unless @is_empty
+      params[:children_name].length.times do |i|
+        @children << {name: params[:children_name][i], item_path: params[:children_path][i], type: params[:children_type][i]}
+      end
+    end
+    
+    render partial: "folder_view"
   end
 
   def save
@@ -75,6 +89,5 @@ class MainController < ApplicationController
     rescue => e
       render json: { error: "Error! #{e.message}" }, status: :unprocessable_entity
     end
-
   end
 end
