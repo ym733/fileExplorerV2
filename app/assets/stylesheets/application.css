@@ -1,10 +1,226 @@
-/*
- * This is a manifest file that'll be compiled into application.css.
- *
- * With Propshaft, assets are served efficiently without preprocessing steps. You can still include
- * application-wide styles in this file, but keep in mind that CSS precedence will follow the standard
- * cascading order, meaning styles declared later in the document or manifest will override earlier ones,
- * depending on specificity.
- *
- * Consider organizing styles into separate files for maintainability.
- */
+:root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8f9fa;
+    --bg-tertiary: #e9ecef;
+    --text-primary: #212529;
+    --text-secondary: #6c757d;
+    --text-muted: #adb5bd;
+    --border-color: #dee2e6;
+    --shadow-color: rgba(0, 0, 0, 0.075);
+    --hover-bg: #f8f9fa;
+    --selected-bg: #cfe2ff;
+    --selected-border: #007bff;
+}
+
+[data-theme="dark"] {
+    --bg-primary: #212529;
+    --bg-secondary: #343a40;
+    --bg-tertiary: #495057;
+    --text-primary: #f8f9fa;
+    --text-secondary: #adb5bd;
+    --text-muted: #6c757d;
+    --border-color: #495057;
+    --shadow-color: rgba(0, 0, 0, 0.3);
+    --hover-bg: #343a40;
+    --selected-bg: #0d6efd;
+    --selected-border: #0a58ca;
+}
+
+body {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+form {
+    display: inline;
+}
+
+.theme-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    background-color: var(--bg-primary);
+    border: 2px solid var(--border-color);
+    border-radius: 50px;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+.file {
+    list-style-type: circle;
+}
+
+.directory {
+    list-style-type: disc;
+}
+
+.file-explorer-container {
+    display: flex;
+    height: 100vh;
+    background-color: var(--bg-secondary);
+}
+
+.sidebar {
+    width: 50vh;
+    background-color: var(--bg-primary);
+    border-right: 1px solid var(--border-color);
+    padding: 1rem;
+    overflow-y: auto;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--text-primary);
+}
+
+.directory-tree {
+    font-family: 'Courier New', monospace;
+}
+
+.text-themed-muted {
+    color: var(--text-muted) !important;
+}
+
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+}
+
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background-color: var(--bg-primary);
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem var(--shadow-color);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.toolbar-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.file-grid {
+    display: grid;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: var(--bg-primary);
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem var(--shadow-color);
+    overflow-y: auto;
+    flex: 1;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-secondary);
+}
+
+.btn-plain-text {
+    background: none;
+    border: none;
+    padding: 0;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+}
+
+textarea:focus {
+    outline: none;
+    box-shadow: none;
+    border: none;
+}
+
+.btn-outline-primary,
+.btn-outline-secondary,
+.btn-outline-success,
+.btn-outline-danger {
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.btn-outline-primary:hover,
+.btn-outline-secondary:hover,
+.btn-outline-success:hover,
+.btn-outline-danger:hover {
+    background-color: var(--hover-bg);
+}
+
+.clickable-arrow {
+    cursor: pointer;
+    transition: transform 0.1s ease;
+}
+
+/* Dark mode specific button styles */
+[data-theme="dark"] .btn-outline-primary:not(:disabled):not(.disabled):active,
+[data-theme="dark"] .btn-outline-primary:not(:disabled):not(.disabled).active {
+    background-color: var(--selected-bg);
+    border-color: var(--selected-border);
+}
+
+.progress {
+    height: 8px;
+    margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+    .file-explorer-container {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: 200px;
+        border-right: none;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .file-grid {
+        gap: 0.5rem;
+    }
+
+    .toolbar {
+        flex-direction: column;
+    }
+
+    .toolbar-actions {
+        justify-content: center;
+    }
+}
+
+.list-group-item-action:hover {
+    background-color: var(--hover-bg) !important;
+}
+
+.list-group-item-action:focus {
+    background-color: var(--selected-bg) !important;
+    border-color: var(--selected-border) !important;
+}

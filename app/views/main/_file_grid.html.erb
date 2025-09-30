@@ -9,6 +9,13 @@
     document.getElementById('create-file').style.display = 'none';
     document.getElementById('create-folder').style.display = 'none';
 
+    document.addEventListener('keydown', function(event) {
+        if (event.ctrlKey && event.key === 's') {
+            event.preventDefault(); // Prevent the default browser save dialog
+            saveData();
+        }
+    });
+
     function saveData() {
         const itemPath = '<%= @item_path %>';
         const textData = document.getElementById('text-input').value;
