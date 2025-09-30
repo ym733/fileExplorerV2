@@ -2,31 +2,7 @@ class MainController < ApplicationController
   def index
     root_directory_path = Dir.home
 
-    def build_directory_tree(path)
-      items = []
-      Dir.foreach(path) do |item|
-        item_path = File.join(path, item)
-        next if item[0] == '.' && File.directory?(item_path) # rubocop:disable Style/StringLiterals
-
-        if File.directory?(item_path)
-          items << {
-            name: item,
-            item_path: item_path,
-            type: "directory",
-            children: build_directory_tree(item_path)
-          }
-        else
-          items << {
-            name: item,
-            item_path: item_path,
-            type: "file"
-          }
-        end
-      end
-      items.sort_by { |item| item[:name].downcase }
-    end
-
-    @tree = build_directory_tree root_directory_path
+    @tree = directory_tree root_directory_path
     # puts @tree
   end
 
@@ -41,7 +17,7 @@ class MainController < ApplicationController
           name: item,
           item_path: item_path,
           type: "directory",
-          children: build_directory_tree(item_path)
+          children: directory_tree(item_path)
         }
       else
         items << {
