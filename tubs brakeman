@@ -1,0 +1,41 @@
+
+[1m[35m== Brakeman Report ==
+[0m
+[32mApplication Path[0m: /home/ym733/rubyServer/fileExplorerV2
+[32mRails Version[0m: 8.0.2.1
+[32mBrakeman Version[0m: 7.1.0
+[32mScan Date[0m: 2025-09-30 15:33:13 +0300
+[32mDuration[0m: 0.342600385 seconds
+[32mChecks Run[0m: BasicAuth, BasicAuthTimingAttack, CSRFTokenForgeryCVE, ContentTag, CookieSerialization, CreateWith, CrossSiteScripting, DefaultRoutes, Deserialize, DetailedExceptions, DigestDoS, DynamicFinders, EOLRails, EOLRuby, EscapeFunction, Evaluation, Execute, FileAccess, FileDisclosure, FilterSkipping, ForgerySetting, HeaderDoS, I18nXSS, JRubyXML, JSONEncoding, JSONEntityEscape, JSONParsing, LinkTo, LinkToHref, MailTo, MassAssignment, MimeTypeDoS, ModelAttrAccessible, ModelAttributes, ModelSerialize, NestedAttributes, NestedAttributesBypass, NumberToCurrency, PageCachingCVE, Pathname, PermitAttributes, QuoteTableName, Ransack, Redirect, RegexDoS, Render, RenderDoS, RenderInline, ResponseSplitting, RouteDoS, SQL, SQLCVEs, SSLVerify, SafeBufferManipulation, SanitizeConfigCve, SanitizeMethods, SelectTag, SelectVulnerability, Send, SendFile, SessionManipulation, SessionSettings, SimpleFormat, SingleQuotes, SkipBeforeFilter, SprocketsPathTraversal, StripTags, SymbolDoSCVE, TemplateInjection, TranslateBug, UnsafeReflection, UnsafeReflectionMethods, ValidationRegex, VerbConfusion, WeakRSAKey, WithoutProtection, XMLDoS, YAMLParsing
+
+[1m[35m== Overview ==
+[0m
+[32mControllers[0m: 2
+[32mModels[0m: 1
+[32mTemplates[0m: 6
+[32mErrors[0m: 0
+[32mSecurity Warnings[0m: 2
+
+[1m[35m== Warning Types ==
+[0m
+[32mFile Access[0m: 1
+[32mSQL Injection[0m: 1
+
+[1m[35m== Warnings ==
+[0m
+[32mConfidence[0m: [31mHigh[0m
+[32mCategory[0m: File Access
+[32mCheck[0m: FileAccess
+[32mMessage[0m: Parameter value used in file name
+[32mCode[0m: File.read([33mparams[:item_path][0m)
+[32mFile[0m: app/controllers/main_controller.rb
+[32mLine[0m: 82
+
+[32mConfidence[0m: [38mWeak[0m
+[32mCategory[0m: SQL Injection
+[32mCheck[0m: SQL
+[32mMessage[0m: Possible SQL injection
+[32mCode[0m: f.read(blocksize).count(("\t\n\r" + [33m(32..126).map(&:chr).join[0m))
+[32mFile[0m: app/controllers/main_controller.rb
+[32mLine[0m: 70
+
