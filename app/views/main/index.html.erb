@@ -19,12 +19,7 @@
                     <%= button_to "Root",   
                         "/folder",
                         method: :get,
-                        params: {
-                            item_path: Dir.home,
-                            children_name: @tree.map { |child| child[:name] },
-                            children_path: @tree.map { |child| child[:item_path] },
-                            children_type: @tree.map { |child| child[:type] },
-                        },
+                        params: { item_path: Dir.home },
                         class: "btn btn-plain-text name text-nowrap",
                         form: { data: { turbo_frame: "file-grid" } }
                     %>

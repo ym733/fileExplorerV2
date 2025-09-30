@@ -30,6 +30,30 @@ class MainController < ApplicationController
     # puts @tree
   end
 
+  def directory_tree(path)
+    items = []
+    Dir.foreach(path) do |item|
+      item_path = File.join(path, item)
+      next if item[0] == '.' && File.directory?(item_path) # rubocop:disable Style/StringLiterals
+
+      if File.directory?(item_path)
+        items << {
+          name: item,
+          item_path: item_path,
+          type: "directory",
+          children: build_directory_tree(item_path)
+        }
+      else
+        items << {
+          name: item,
+          item_path: item_path,
+          type: "file"
+        }
+      end
+    end
+    items.sort_by { |item| item[:name].downcase }
+  end
+
   def file
     # Function to tell if the file accessed is a binary or a text file
     def text_file?(path, blocksize: 512)
@@ -62,13 +86,15 @@ class MainController < ApplicationController
   end
 
   def folder
-    @children = []
-    @is_empty = params[:children_name].nil?
     @item_path = params[:item_path]
+    directory_tree = directory_tree(@item_path)
+    @is_empty = directory_tree.empty?
+    @children = []
+
 
     unless @is_empty
-      params[:children_name].length.times do |i|
-        @children << {name: params[:children_name][i], item_path: params[:children_path][i], type: params[:children_type][i]}
+      directory_tree.each do |child|
+        @children << { name: child[:name], item_path: child[:item_path], type: child[:type] }
       end
     end
     

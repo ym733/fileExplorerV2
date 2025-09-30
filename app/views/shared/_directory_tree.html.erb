@@ -10,12 +10,7 @@
         <%= button_to item[:name],
             "/folder",
             method: :get,
-            params: {
-                item_path: item[:item_path],
-                children_name: item[:children].map { |child| child[:name] },
-                children_path: item[:children].map { |child| child[:item_path] },
-                children_type: item[:children].map { |child| child[:type] },
-            },
+            params: { item_path: item[:item_path] },
             class: "btn btn-plain-text name text-nowrap",
             form: { data: { turbo_frame: "file-grid" } }
         %>
