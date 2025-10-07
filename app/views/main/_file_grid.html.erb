@@ -1,8 +1,24 @@
 <%= turbo_frame_tag "file-grid", class: "file-grid" do %>
 <% if @is_text %>
 <div class="file-grid" id="file-grid">
-    <textarea id="text-input" name="text-input" class="w-100 h-100 border-0 p-0 m-0 bg-transparent" style="font: inherit; color: inherit; background-color: transparent; resize: none;"><%= @text %></textarea>
+    <textarea id="text-input" name="text-input"><%= @text %></textarea>
 </div>
+
+<script>
+    async function func() {
+        <% @language[:files].each do |item| %>
+            await import("modules/<%= item[0...-3] %>");
+        <% end %>
+
+        editor = CodeMirror.fromTextArea(document.getElementById('text-input'), {
+            mode: '<%= @language[:mode] %>',
+            lineNumbers: true,
+        });
+    }
+
+    func();
+</script>
+
 <script>
     document.getElementById('save-button').style.display = 'block';
     document.getElementById('upload-file').style.display = 'none';
@@ -12,7 +28,15 @@
     document.addEventListener('keydown', function(event) {
         if (event.ctrlKey && event.key === 's') {
             event.preventDefault(); // Prevent the default browser save dialog
-            saveData();
+            if (canSave) {
+                saveData();
+
+                // Disable for 1 second
+                canSave = false;
+                setTimeout(() => {
+                    canSave = true;
+                }, 1000);
+            }
         }
     });
 
@@ -24,14 +48,14 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
+                    'X-CSRF-Token': document.querySelector('[name=" csrf-token"]').content
                 },
                 body: JSON.stringify({
                     item_path: itemPath,
                     text_data: textData
                 })
-            })
-            .then(response => response.json())
+            }).then(response =>
+                response.json())
             .then(data => {
                 if (data.error) {
                     showNotification(data.error, 'error');
@@ -46,7 +70,7 @@
 <% else %>
 <div class="file-grid" id="file-grid">
     <!-- Files and folders will be populated here -->
-    <div class="d-flex justify-content-center flex-column align-items-center" style="grid-column: 1 / -1;">
+    <div class="d-flex justify-content-center flex-column align-items-center" style="margin: auto;">
         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mb-2">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
             <polyline points="14,2 14,8 20,8" />

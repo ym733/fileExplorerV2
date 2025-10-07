@@ -104,6 +104,7 @@ form {
     display: flex;
     flex-direction: column;
     padding: 1rem;
+    overflow-y: auto;
 }
 
 .toolbar {
@@ -134,6 +135,15 @@ form {
     overflow-y: auto;
     flex: 1;
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
+
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.file-grid:has(.CodeMirror) {
+    overflow-y: hidden;
 }
 
 .empty-state {
@@ -193,7 +203,6 @@ textarea:focus {
 @media (max-width: 768px) {
     .file-explorer-container {
         flex-direction: column;
-        height: auto;
     }
 
     .sidebar {
@@ -223,4 +232,195 @@ textarea:focus {
 .list-group-item-action:focus {
     background-color: var(--selected-bg) !important;
     border-color: var(--selected-border) !important;
+}
+
+/* CODE MIRROR CHANGES FOR LIGHT/DARK THEME */
+
+/* CodeMirror Base Styles */
+.CodeMirror {
+    background: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+    font: inherit;
+    border-radius: 0.5rem;
+    resize: none;
+    height: 100vh !important;
+    border: 0 !important;
+    padding: 0 !important;
+    margin: -1rem !important;
+    flex: 1;
+}
+
+.CodeMirror-gutters {
+    background: var(--bg-tertiary) !important;
+    border-right: 1px solid var(--border-color) !important;
+}
+
+.CodeMirror-linenumber {
+    color: var(--text-muted) !important;
+}
+
+.CodeMirror-cursor {
+    border-left: 2px solid var(--text-primary) !important;
+}
+
+.CodeMirror-selected {
+    background: var(--selected-bg) !important;
+}
+
+.CodeMirror-line::selection,
+.CodeMirror-line>span::selection,
+.CodeMirror-line>span>span::selection {
+    background: var(--selected-bg) !important;
+}
+
+.CodeMirror-activeline-background {
+    background: var(--hover-bg) !important;
+}
+
+/* Syntax highlighting for light theme */
+:root .cm-keyword {
+    color: #d73a49 !important;
+}
+
+:root .cm-atom {
+    color: #005cc5 !important;
+}
+
+:root .cm-number {
+    color: #005cc5 !important;
+}
+
+:root .cm-def {
+    color: #6f42c1 !important;
+}
+
+:root .cm-variable {
+    color: #24292e !important;
+}
+
+:root .cm-variable-2 {
+    color: #005cc5 !important;
+}
+
+:root .cm-variable-3 {
+    color: #6f42c1 !important;
+}
+
+:root .cm-property {
+    color: #005cc5 !important;
+}
+
+:root .cm-operator {
+    color: #d73a49 !important;
+}
+
+:root .cm-comment {
+    color: #6a737d !important;
+    font-style: italic !important;
+}
+
+:root .cm-string {
+    color: #032f62 !important;
+}
+
+:root .cm-string-2 {
+    color: #032f62 !important;
+}
+
+:root .cm-meta {
+    color: #005cc5 !important;
+}
+
+:root .cm-qualifier {
+    color: #6f42c1 !important;
+}
+
+:root .cm-builtin {
+    color: #005cc5 !important;
+}
+
+:root .cm-bracket {
+    color: #24292e !important;
+}
+
+:root .cm-tag {
+    color: #22863a !important;
+}
+
+:root .cm-attribute {
+    color: #6f42c1 !important;
+}
+
+/* Syntax highlighting for dark theme */
+[data-theme="dark"] .cm-keyword {
+    color: #ff7b72 !important;
+}
+
+[data-theme="dark"] .cm-atom {
+    color: #79c0ff !important;
+}
+
+[data-theme="dark"] .cm-number {
+    color: #79c0ff !important;
+}
+
+[data-theme="dark"] .cm-def {
+    color: #d2a8ff !important;
+}
+
+[data-theme="dark"] .cm-variable {
+    color: #f8f9fa !important;
+}
+
+[data-theme="dark"] .cm-variable-2 {
+    color: #79c0ff !important;
+}
+
+[data-theme="dark"] .cm-variable-3 {
+    color: #d2a8ff !important;
+}
+
+[data-theme="dark"] .cm-property {
+    color: #79c0ff !important;
+}
+
+[data-theme="dark"] .cm-operator {
+    color: #ff7b72 !important;
+}
+
+[data-theme="dark"] .cm-comment {
+    color: #8b949e !important;
+    font-style: italic !important;
+}
+
+[data-theme="dark"] .cm-string {
+    color: #a5d6ff !important;
+}
+
+[data-theme="dark"] .cm-string-2 {
+    color: #a5d6ff !important;
+}
+
+[data-theme="dark"] .cm-meta {
+    color: #79c0ff !important;
+}
+
+[data-theme="dark"] .cm-qualifier {
+    color: #d2a8ff !important;
+}
+
+[data-theme="dark"] .cm-builtin {
+    color: #79c0ff !important;
+}
+
+[data-theme="dark"] .cm-bracket {
+    color: #f8f9fa !important;
+}
+
+[data-theme="dark"] .cm-tag {
+    color: #7ee787 !important;
+}
+
+[data-theme="dark"] .cm-attribute {
+    color: #d2a8ff !important;
 }
