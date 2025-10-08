@@ -8,7 +8,9 @@ vendor/* linguist-vendored
 config/credentials/*.yml.enc diff=rails_credentials
 config/credentials.yml.enc diff=rails_credentials
 
-#ignore HTML files
-*.html linguist-detectable=false
-*.erb linguist-detectable=false
-*.html.erb linguist-detectable=false
+#erb as Ruby files
+*.erb linguist-language=Ruby
+*.html.erb linguist-language=Ruby
+
+# Ignore JavaScript files
+*.js linguist-detectable=false
