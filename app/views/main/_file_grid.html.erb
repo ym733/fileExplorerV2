@@ -19,8 +19,6 @@
             styleActiveLine: true,
             gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
         });
-
-        const textData = editor.getValue();
     }
 
     func();
@@ -49,6 +47,7 @@
 
     function saveData() {
         const itemPath = '<%= @item_path %>';
+        const textData = editor.getValue();
         
         fetch('/save', {
                 method: 'POST',
