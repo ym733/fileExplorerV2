@@ -315,12 +315,9 @@ class MainController < ApplicationController
       @text = File.read(params[:item_path])
 
       @language = prog_language(extension)
-
-      @language[:files].each do |file|
-      end
     end
 
-    render partial: "file_grid"
+    render partial: "file_grid", status: :ok
   end
 
   def folder
@@ -336,7 +333,7 @@ class MainController < ApplicationController
       end
     end
 
-    render partial: "folder_view"
+    render partial: "folder_view", status: :ok
   end
 
   def save

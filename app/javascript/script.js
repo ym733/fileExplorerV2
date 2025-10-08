@@ -29,6 +29,3 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
-
-let canSave = true;
-let editor = null;

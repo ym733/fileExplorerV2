@@ -14,3 +14,6 @@ pin "script"
 
 # All CodeMirror supported languages
 pin_all_from "app/javascript/modules", under: "modules"
+
+# CodeMirror addons
+pin_all_from "app/javascript/codemirror-addons", under: "codemirror-addons"

@@ -13,7 +13,14 @@
         editor = CodeMirror.fromTextArea(document.getElementById('text-input'), {
             mode: '<%= @language[:mode] %>',
             lineNumbers: true,
+            autoCloseBrackets: true,
+            matchBrackets: true,
+            foldGutter: true,
+            styleActiveLine: true,
+            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
         });
+
+        const textData = editor.getValue();
     }
 
     func();
@@ -42,13 +49,12 @@
 
     function saveData() {
         const itemPath = '<%= @item_path %>';
-        const textData = document.getElementById('text-input').value;
-
+        
         fetch('/save', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-Token': document.querySelector('[name=" csrf-token"]').content
+                    'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
                 },
                 body: JSON.stringify({
                     item_path: itemPath,
