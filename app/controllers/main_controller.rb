@@ -308,7 +308,14 @@ class MainController < ApplicationController
     end
 
     @is_text = text_file?(params[:item_path])
-    extension = File.extname(params[:item_path]).delete_prefix(".")
+    extension = File.extname(params[:item_path]).delete_prefix(".").downcase
+
+    if extension == ""
+      extension = File.basename(params[:item_path]).downcase
+    end
+
+    puts "EXTENSION: #{extension}"
+
     @item_path = params[:item_path]
 
     if @is_text
