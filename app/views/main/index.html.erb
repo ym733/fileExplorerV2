@@ -33,6 +33,14 @@
     <div class="main-content">
         <div class="toolbar d-flex justify-content-between">
             <div class="toolbar-actions d-flex">
+                <div class="ms-auto" id="back-button-div">
+                    <%= button_to raw('<i class="fa-solid fa-angle-left fa-lg"></i>'),
+                        "/back",
+                        method: :get,
+                        class: "btn btn-outline-info btn-sm",
+                        form: { data: { turbo_frame: "file-grid" } }
+                    %>
+                </div>
                 <button class="btn btn-outline-secondary btn-sm" id="create-folder" style="display:none;">
                     <i class="fas fa-folder-plus"></i> New Folder
                 </button>

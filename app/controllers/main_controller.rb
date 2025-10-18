@@ -2,8 +2,8 @@ class MainController < ApplicationController
   def index
     root_directory_path = Dir.home
 
+    flash[:current_path] = Dir.home
     @tree = directory_tree root_directory_path
-    # puts @tree
   end
 
   def directory_tree(path)
@@ -314,8 +314,6 @@ class MainController < ApplicationController
       extension = File.basename(params[:item_path]).downcase
     end
 
-    puts "EXTENSION: #{extension}"
-
     @item_path = params[:item_path]
 
     if @is_text
@@ -324,6 +322,7 @@ class MainController < ApplicationController
       @language = prog_language(extension)
     end
 
+    flash[:current_path] = @item_path
     render partial: "file_grid", status: :ok
   end
 
@@ -340,6 +339,7 @@ class MainController < ApplicationController
       end
     end
 
+    flash[:current_path] = @item_path
     render partial: "folder_view", status: :ok
   end
 
@@ -357,5 +357,15 @@ class MainController < ApplicationController
     rescue => e
       render json: { error: "Error! #{e.message}" }, status: :unprocessable_entity
     end
+  end
+
+  def back
+    unless flash[:current_path] == Dir.home
+      params[:item_path] = (flash[:current_path].split("/")[0...-1]).join("/")
+    else
+      params[:item_path] = Dir.home
+    end
+
+    folder()
   end
 end

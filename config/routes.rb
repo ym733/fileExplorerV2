@@ -5,11 +5,14 @@ Rails.application.routes.draw do
   root to: "main#index"
 
   # GET /file
-  get '/file', to: "main#file"
+  get "/file", to: "main#file"
 
   # GET /folder
-  get '/folder', to: "main#folder"
+  get "/folder", to: "main#folder"
 
-  #POST /save
-  post '/save', to: "main#save"
+  # POST /save
+  post "/save", to: "main#save"
+
+  # GET /back
+  get "/back", to: "main#back"
 end
