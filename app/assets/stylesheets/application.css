@@ -108,8 +108,8 @@ form {
 }
 
 .toolbar {
-    display: flex;
-    justify-content: space-between;
+    display: flex !important;
+    justify-content: space-between !important;
     align-items: center;
     margin-bottom: 1rem;
     padding: 1rem;
@@ -119,10 +119,15 @@ form {
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.toolbar-actions {
+.toolbar-actions-l {
     display: flex;
     gap: 0.5rem;
     align-items: center;
+}
+
+.toolbar-actions-r {
+    margin-left: auto !important;
+    gap: 0.5rem;
 }
 
 .file-grid {
@@ -216,12 +221,12 @@ textarea:focus {
         gap: 0.5rem;
     }
 
-    .toolbar {
-        flex-direction: column;
+    .toolbar-actions-l {
+        margin-right: auto !important
     }
 
-    .toolbar-actions {
-        justify-content: center;
+    .toolbar-actions-r {
+        margin-left: 0 !important;
     }
 }
 

@@ -1,6 +1,6 @@
 <ul class="directory-tree" id="<%= id %>">
     <% tree.each do |item| %>
-    <li style="display: none; list-style-type: none;" class="<%= item[:type] %>">
+    <li style="display: none; list-style-type: none; white-space: nowrap;" class="<%= item[:type] %>">
         <% if item[:type] == 'directory' %>
 
         <%# DIRECTORIES GO HERE %>

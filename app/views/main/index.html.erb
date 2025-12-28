@@ -31,8 +31,8 @@
 
     <!-- Main content area -->
     <div class="main-content">
-        <div class="toolbar d-flex justify-content-between">
-            <div class="toolbar-actions d-flex">
+        <div class="toolbar">
+            <div class="toolbar-actions-l d-flex">
                 <div class="ms-auto" id="back-button-div">
                     <%= button_to raw('<i class="fa-solid fa-angle-left fa-lg"></i>'),
                         "/back",
@@ -51,8 +51,13 @@
                     <i class="fas fa-upload"></i> Upload
                 </button>
             </div>
-            <div class="ms-auto" id="save-button-div">
-                <button id="save-button" class="btn btn-outline-info btn-sm" onclick="saveData()" style="display:none;">Save</button>
+            <div class="toolbar-actions-r d-flex">
+                <button class="btn btn-outline-secondary btn-sm" id="refresh-file" style="display:none;">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+                <div id="save-button-div">
+                    <button id="save-button" class="btn btn-outline-info btn-sm" onclick="saveData()" style="display:none;">Save</button>
+                </div>
             </div>
         </div>
 
@@ -131,7 +136,7 @@
         }, 4000);
     }
 
-    
-let canSave = true;
-let editor = null;
+
+    let canSave = true;
+    let editor = null;
 </script>
