@@ -6,6 +6,113 @@ class MainController < ApplicationController
     @tree = directory_tree root_directory_path
   end
 
+  def refresh_file
+    path = flash[:current_path]
+
+    puts "PATH: #{path}"
+
+    if File.directory?(path)
+      @item_path = path
+      directory_tree = directory_tree(@item_path)
+      @is_empty = directory_tree.empty?
+      @children = []
+
+      unless @is_empty
+        directory_tree.each do |child|
+          @children << { name: child[:name], item_path: child[:item_path], type: child[:type] }
+        end
+      end
+
+      flash[:current_path] = @item_path
+      render partial: "folder_view", status: :ok
+    
+    else
+      @is_text = text_file?(flash[:current_path])
+      extension = File.extname(flash[:current_path]).delete_prefix(".").downcase
+
+      if extension == ""
+        extension = File.basename(flash[:current_path]).downcase
+      end
+
+      if @is_text
+        @text = File.read(flash[:current_path])
+
+        @language = prog_language(extension)
+      end
+
+      flash[:current_path] = path
+      render partial: "file_grid", status: :ok
+    end
+  end
+
+  def file
+    
+    @is_text = text_file?(params[:item_path])
+    extension = File.extname(params[:item_path]).delete_prefix(".").downcase
+
+    if extension == ""
+      extension = File.basename(params[:item_path]).downcase
+    end
+
+    @item_path = params[:item_path]
+
+    if @is_text
+      @text = File.read(params[:item_path])
+
+      @language = prog_language(extension)
+    end
+
+    flash[:current_path] = @item_path
+    render partial: "file_grid", status: :ok
+  end
+
+  def folder
+    @item_path = params[:item_path]
+    directory_tree = directory_tree(@item_path)
+    @is_empty = directory_tree.empty?
+    @children = []
+
+
+    unless @is_empty
+      directory_tree.each do |child|
+        @children << { name: child[:name], item_path: child[:item_path], type: child[:type] }
+      end
+    end
+
+    flash[:current_path] = @item_path
+    render partial: "folder_view", status: :ok
+  end
+
+  def save
+    text_data = params[:'text_data']
+    item_path = params[:'item_path']
+
+    if text_data.blank? || item_path.blank?
+      return render json: { error: "Error! Both 'text-data' and 'item-path' are required" }, status: :bad_request
+    end
+
+    begin
+      File.write(item_path, text_data)
+      render json: {  result: "Success!", message: "'#{item_path.split("/")[-1]}' saved successfully!" }, status: :ok
+    rescue => e
+      render json: { error: "Error! #{e.message}" }, status: :unprocessable_entity
+    end
+  end
+
+  def back
+    unless flash[:current_path] == Dir.home
+      params[:item_path] = (flash[:current_path].split("/")[0...-1]).join("/")
+    else
+      params[:item_path] = Dir.home
+    end
+
+    folder()
+  end
+
+  #==============================================================
+  # BELLOW ARE TOOLS AND NOT ROUTES
+  #==============================================================
+
   def directory_tree(path)
     items = []
     Dir.foreach(path) do |item|
@@ -306,106 +413,4 @@ class MainController < ApplicationController
     }
   end
 
-  def refresh_file
-    path = flash[:current_path]
-
-    puts "PATH: #{path}"
-
-    if File.directory?(path)
-      @item_path = path
-      directory_tree = directory_tree(@item_path)
-      @is_empty = directory_tree.empty?
-      @children = []
-
-      unless @is_empty
-        directory_tree.each do |child|
-          @children << { name: child[:name], item_path: child[:item_path], type: child[:type] }
-        end
-      end
-
-      flash[:current_path] = @item_path
-      render partial: "folder_view", status: :ok
-    
-    else
-      @is_text = text_file?(flash[:current_path])
-      extension = File.extname(flash[:current_path]).delete_prefix(".").downcase
-
-      if extension == ""
-        extension = File.basename(flash[:current_path]).downcase
-      end
-
-      if @is_text
-        @text = File.read(flash[:current_path])
-
-        @language = prog_language(extension)
-      end
-
-      flash[:current_path] = path
-      render partial: "file_grid", status: :ok
-    end
-  end
-
-  def file
-    
-    @is_text = text_file?(params[:item_path])
-    extension = File.extname(params[:item_path]).delete_prefix(".").downcase
-
-    if extension == ""
-      extension = File.basename(params[:item_path]).downcase
-    end
-
-    @item_path = params[:item_path]
-
-    if @is_text
-      @text = File.read(params[:item_path])
-
-      @language = prog_language(extension)
-    end
-
-    flash[:current_path] = @item_path
-    render partial: "file_grid", status: :ok
-  end
-
-  def folder
-    @item_path = params[:item_path]
-    directory_tree = directory_tree(@item_path)
-    @is_empty = directory_tree.empty?
-    @children = []
-
-
-    unless @is_empty
-      directory_tree.each do |child|
-        @children << { name: child[:name], item_path: child[:item_path], type: child[:type] }
-      end
-    end
-
-    flash[:current_path] = @item_path
-    render partial: "folder_view", status: :ok
-  end
-
-  def save
-    text_data = params[:'text_data']
-    item_path = params[:'item_path']
-
-    if text_data.blank? || item_path.blank?
-      return render json: { error: "Error! Both 'text-data' and 'item-path' are required" }, status: :bad_request
-    end
-
-    begin
-      File.write(item_path, text_data)
-      render json: {  result: "Success!", message: "'#{item_path.split("/")[-1]}' saved successfully!" }, status: :ok
-    rescue => e
-      render json: { error: "Error! #{e.message}" }, status: :unprocessable_entity
-    end
-  end
-
-  def back
-    unless flash[:current_path] == Dir.home
-      params[:item_path] = (flash[:current_path].split("/")[0...-1]).join("/")
-    else
-      params[:item_path] = Dir.home
-    end
-
-    folder()
-  end
 end
