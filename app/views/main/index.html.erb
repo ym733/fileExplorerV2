@@ -52,9 +52,14 @@
                 </button>
             </div>
             <div class="toolbar-actions-r d-flex">
-                <button class="btn btn-outline-secondary btn-sm" id="refresh-file" style="display:none;">
-                    <i class="fas fa-sync-alt"></i> Refresh
-                </button>
+                <%= button_to raw('<i class="fas fa-sync-alt"></i> Refresh'),
+                    "/refresh_file",
+                    method: :get,
+                    id: "refresh-file",
+                    class: "btn btn-outline-secondary btn-sm",
+                    style: "display: none;",
+                    form: { data: { turbo_frame: "file-grid" } } 
+                %>
                 <div id="save-button-div">
                     <button id="save-button" class="btn btn-outline-info btn-sm" onclick="saveData()" style="display:none;">Save</button>
                 </div>

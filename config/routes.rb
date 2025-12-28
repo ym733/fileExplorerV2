@@ -7,6 +7,10 @@ Rails.application.routes.draw do
   # GET /file
   get "/file", to: "main#file"
 
+  #GET /refresh_file
+
+  get "/refresh_file", to: "main#refresh_file"
+
   # GET /folder
   get "/folder", to: "main#folder"
 
