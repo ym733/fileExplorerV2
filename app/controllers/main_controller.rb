@@ -25,7 +25,7 @@ class MainController < ApplicationController
 
       flash[:current_path] = @item_path
       render partial: "folder_view", status: :ok
-    
+
     else
       @is_text = text_file?(flash[:current_path])
       extension = File.extname(flash[:current_path]).delete_prefix(".").downcase
@@ -144,7 +144,7 @@ class MainController < ApplicationController
 
     File.open(path, "rb") do |f|
       chunk = f.read(blocksize)
-      
+
       return true if chunk.nil? || chunk.empty? # empty files → treat as text
 
       # Check for null bytes (common in binary files)
@@ -412,5 +412,4 @@ class MainController < ApplicationController
       files: []
     }
   end
-
 end
