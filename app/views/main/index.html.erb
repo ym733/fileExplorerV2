@@ -1,6 +1,6 @@
 <div class="file-explorer-container">
     <!-- Sidebar for directory tree -->
-    <div class="sidebar">
+    <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <h3>Directory Tree</h3>
         </div>
@@ -30,6 +30,9 @@
     <div class="main-content">
         <div class="toolbar">
             <div class="toolbar-actions-l d-flex">
+                <button class="btn btn-outline-secondary btn-sm" id="toggle-sidebar" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
                 <div class="ms-auto" id="back-button-div">
                     <%= button_to raw('<i class="fa-solid fa-angle-left fa-lg"></i>'),
                         "/back",
@@ -76,6 +79,11 @@
 </div>
 
 <script>
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        sidebar.classList.toggle('collapsed');
+    }
+
     function toggleListItems(id) {
         const items = document.querySelectorAll(`#${id} > li`);
         items.forEach(item => {

@@ -193,6 +193,19 @@ textarea:focus {
     transition: transform 0.1s ease;
 }
 
+.sidebar {
+    transition: transform 0.3s ease, width 0.3s ease, height 0.3s ease;
+}
+
+.sidebar.collapsed {
+    transform: translateX(-100%);
+    width: 0;
+}
+
+.main-content {
+    transition: margin-left 0.3s ease;
+}
+
 /* Dark mode specific button styles */
 [data-theme="dark"] .btn-outline-primary:not(:disabled):not(.disabled):active,
 [data-theme="dark"] .btn-outline-primary:not(:disabled):not(.disabled).active {
@@ -227,6 +240,12 @@ textarea:focus {
 
     .toolbar-actions-r {
         margin-left: 0 !important;
+    }
+
+    .sidebar.collapsed {
+        transform: translateY(-100%);
+        width: 100%;
+        height: 0;
     }
 }
 
