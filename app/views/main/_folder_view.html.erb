@@ -45,12 +45,20 @@
 <script>
     // THIS IS THE /new_item IMPLMENTATION
 
+    let isProcessing = false;
+
     document.getElementById('create-folder').addEventListener('click', function() {
+        if (isProcessing) return;
+        isProcessing = true;
         showCreateDialog('folder');
+        setTimeout(() => isProcessing = false, 300);
     });
 
     document.getElementById('create-file').addEventListener('click', function() {
+        if (isProcessing) return;
+        isProcessing = true;
         showCreateDialog('file');
+        setTimeout(() => isProcessing = false, 300);
     });
 
     function showCreateDialog(type) {
