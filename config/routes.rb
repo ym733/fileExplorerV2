@@ -19,4 +19,7 @@ Rails.application.routes.draw do
 
   # GET /back
   get "/back", to: "main#back"
+
+  # POST /new_item
+  post "/new_item", to: "main#new_item"
 end

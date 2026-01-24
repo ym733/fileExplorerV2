@@ -109,6 +109,49 @@ class MainController < ApplicationController
     folder()
   end
 
+  def new_item
+    current_path = flash[:current_path]
+    item_type = params[:'item_type']
+    item_name = params[:'name']
+
+    puts current_path # /home/ym733/emptyDir
+    puts item_type # file / folder
+    puts item_name # file.txt / fileExplorer
+
+    if item_type == "folder"
+
+      if Dir.exist?("#{current_path}/#{item_name}")
+        count = 1
+        loop do
+          break unless Dir.exist?("#{current_path}/#{item_name} (#{count})")
+          count += 1
+        end
+
+        item_name = "#{item_name} (#{count})"
+      end
+
+      Dir.mkdir(File.join(current_path, item_name))
+    else
+      if File.exist?("#{current_path}/#{item_name}")
+        count = 1
+        name = File.basename(item_name, File.extname(item_name))
+        extension = File.extname(item_name)
+
+        loop do
+          break unless File.exist?("#{current_path}/#{name} (#{count})#{extension}")
+          count += 1
+        end
+
+        item_name = "#{name} (#{count})#{extension}"
+      end
+
+      File.write(File.join(current_path, item_name), "")
+    end
+
+    params[:item_path] = current_path
+    folder()
+  end
+
   #==============================================================
   # BELLOW ARE TOOLS AND NOT ROUTES
   #==============================================================
