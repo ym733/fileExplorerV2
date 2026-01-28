@@ -22,4 +22,7 @@ Rails.application.routes.draw do
 
   # POST /new_item
   post "/new_item", to: "main#new_item"
+
+  # POST /upload
+  post "/upload", to: "main#upload"
 end

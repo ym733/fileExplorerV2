@@ -46,7 +46,6 @@ class MainController < ApplicationController
   end
 
   def file
-    
     @is_text = text_file?(params[:item_path])
     extension = File.extname(params[:item_path]).delete_prefix(".").downcase
 
@@ -146,6 +145,37 @@ class MainController < ApplicationController
       end
 
       File.write(File.join(current_path, item_name), "")
+    end
+
+    params[:item_path] = current_path
+    folder()
+  end
+
+  def upload
+    current_path = flash[:current_path]
+
+    if params[:file].present?
+      uploaded_file = params[:file]
+
+      file_name = uploaded_file.original_filename
+      file_content = uploaded_file.read
+
+      if File.exist?("#{current_path}/#{file_name}")
+        count = 1
+        name = File.basename(file_name, File.extname(file_name))
+        extension = File.extname(file_name)
+
+        loop do
+          break unless File.exist?("#{current_path}/#{name} (#{count})#{extension}")
+          count += 1
+        end
+
+        file_name = "#{name} (#{count})#{extension}"
+      end
+
+      File.open(File.join(current_path, file_name), "wb") do |file|
+        file.write(file_content)
+      end
     end
 
     params[:item_path] = current_path
