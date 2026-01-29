@@ -45,20 +45,16 @@
 <script>
     // THIS IS THE /new_item IMPLMENTATION
 
-    let isProcessing = false;
-
     document.getElementById('create-folder').addEventListener('click', function() {
-        if (isProcessing) return;
-        isProcessing = true;
+        this.disabled = true;
         showCreateDialog('folder');
-        setTimeout(() => isProcessing = false, 300);
+        setTimeout(() => this.disabled = false, 300);
     });
 
     document.getElementById('create-file').addEventListener('click', function() {
-        if (isProcessing) return;
-        isProcessing = true;
+        this.disabled = true;
         showCreateDialog('file');
-        setTimeout(() => isProcessing = false, 300);
+        setTimeout(() => this.disabled = false, 300);
     });
 
     function showCreateDialog(type) {
@@ -147,10 +143,9 @@
     // THIS IS THE /upload IMPLMENTATION
 
     document.getElementById('upload-file').addEventListener('click', function() {
-        if (isProcessing) return;
-        isProcessing = true;
+        this.disabled = true;
         showUploadDialog();
-        setTimeout(() => isProcessing = false, 300);
+        setTimeout(() => this.disabled = false, 300);
     });
 
     function showUploadDialog() {
