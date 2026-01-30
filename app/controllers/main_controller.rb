@@ -182,6 +182,20 @@ class MainController < ApplicationController
     folder()
   end
 
+  def delete_item
+    current_path = flash[:current_path]
+    item_path = params[:item_path]
+
+    unless File.exist? item_path
+      render json: { error: "File does not exisy" }, status: :bad_request
+    end
+
+    File.delete(item_path)
+
+    params[:item_path] = current_path
+    folder()
+  end
+
   #==============================================================
   # BELLOW ARE TOOLS AND NOT ROUTES
   #==============================================================

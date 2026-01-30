@@ -8,7 +8,6 @@ Rails.application.routes.draw do
   get "/file", to: "main#file"
 
   #GET /refresh_file
-
   get "/refresh_file", to: "main#refresh_file"
 
   # GET /folder
@@ -25,4 +24,7 @@ Rails.application.routes.draw do
 
   # POST /upload
   post "/upload", to: "main#upload"
+
+  # DELETE /delete_item
+  delete "/delete_item", to: "main#delete_item"
 end
