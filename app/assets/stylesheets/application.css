@@ -200,6 +200,7 @@ textarea:focus {
 .sidebar.collapsed {
     transform: translateX(-100%);
     width: 0;
+    position: absolute;
 }
 
 .main-content {
