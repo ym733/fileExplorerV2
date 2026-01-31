@@ -25,6 +25,9 @@ Rails.application.routes.draw do
   # POST /upload
   post "/upload", to: "main#upload"
 
-  # DELETE /delete_item
+  # DELETE /delete_file
   delete "/delete_item", to: "main#delete_item"
+
+  # GET /download_file
+  get '/download_file', to: 'main#download_file'
 end

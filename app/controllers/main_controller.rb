@@ -187,13 +187,25 @@ class MainController < ApplicationController
     item_path = params[:item_path]
 
     unless File.exist? item_path
-      render json: { error: "File does not exisy" }, status: :bad_request
+      render json: { error: "File does not exist" }, status: :bad_request
     end
 
     File.delete(item_path)
 
     params[:item_path] = current_path
     folder()
+  end
+
+  def download_file
+    file_path = params[:file_path]
+
+    puts file_path
+
+    send_file(
+      file_path,
+      filename: File.basename(file_path),
+      disposition: 'attachment'
+    )
   end
 
   #==============================================================
