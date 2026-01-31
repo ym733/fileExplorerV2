@@ -58,7 +58,7 @@
 </div>
 
 <script>
-    // THIS IS THE /new_item IMPLMENTATION
+    // THIS IS THE /new_file IMPLMENTATION
 
     document.getElementById('create-folder').addEventListener('click', function() {
         this.disabled = true;
@@ -128,7 +128,7 @@
     }
 
     function createItem(type, name) {
-        fetch('/new_item', {
+        fetch('/new_file', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -234,7 +234,7 @@
 </script>
 
 <script>
-    // THIS IS THE /delete_item IMPLMENTATION
+    // THIS IS THE /delete_file IMPLMENTATION
 
     function delete_file(item_path) {
         const modal = document.createElement('div');
@@ -272,7 +272,7 @@
         });
 
         document.getElementById('confirm-delete').addEventListener('click', function() {
-            fetch('/delete_item', {
+            fetch('/delete_file', {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',

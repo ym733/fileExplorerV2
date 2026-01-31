@@ -108,7 +108,7 @@ class MainController < ApplicationController
     folder()
   end
 
-  def new_item
+  def new_file
     current_path = flash[:current_path]
     item_type = params[:'item_type']
     item_name = params[:'name']
@@ -182,7 +182,7 @@ class MainController < ApplicationController
     folder()
   end
 
-  def delete_item
+  def delete_file
     current_path = flash[:current_path]
     item_path = params[:item_path]
 

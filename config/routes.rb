@@ -19,14 +19,14 @@ Rails.application.routes.draw do
   # GET /back
   get "/back", to: "main#back"
 
-  # POST /new_item
-  post "/new_item", to: "main#new_item"
+  # POST /new_file
+  post "/new_file", to: "main#new_file"
 
   # POST /upload
   post "/upload", to: "main#upload"
 
   # DELETE /delete_file
-  delete "/delete_item", to: "main#delete_item"
+  delete "/delete_file", to: "main#delete_file"
 
   # GET /download_file
   get '/download_file', to: 'main#download_file'
