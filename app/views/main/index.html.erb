@@ -9,18 +9,18 @@
             <!-- Directory tree will be populated here -->
             <ul class="directory-tree">
                 <li class="directory" style="list-style-type: none;">
-                    <svg class="clickable-arrow" width="12" height="12" viewBox="0 0 12 12" onclick="toggleListItems('<%= Dir.home.gsub('/', '_') %>'); toggleArrow(this);">
+                    <svg class="clickable-arrow" width="12" height="12" viewBox="0 0 12 12" onclick="toggleListItems('<%= @root_directory_path %>', this.parentElement.querySelector('ul')); toggleArrow(this);">
                         <path d="M4 2 L8 6 L4 10" stroke="#8a8a8a" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
 
-                    <%= button_to "Root",   
+                    <%= button_to "Root",
                         "/folder",
                         method: :get,
-                        params: { item_path: Dir.home },
+                        params: { item_path: @root_directory_path },
                         class: "btn btn-plain-text name text-nowrap",
                         form: { data: { turbo_frame: "file-grid" } }
                     %>
-                    <%= render "shared/directory_tree", tree: @tree, id: Dir.home.gsub('/', '_') %>
+                    <ul class="directory-tree"></ul>
                 </li>
             </ul>
         </div>
@@ -84,11 +84,34 @@
         sidebar.classList.toggle('collapsed');
     }
 
-    function toggleListItems(id) {
-        const items = document.querySelectorAll(`#${id} > li`);
-        items.forEach(item => {
-            item.style.display = (item.style.display === "none") ? "list-item" : "none";
-        });
+    function toggleListItems(path, ul_element) {
+        if (ul_element.hasChildNodes()) {
+            while (ul_element.firstChild) {
+                ul_element.removeChild(ul_element.firstChild);
+            }
+        } else {
+            if (ul_element) {
+                ul_element.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span> Retrieving chrildren </span>`
+            }
+
+            fetch(`/children?item_path=${encodeURIComponent(path)}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content,
+                    }
+                })
+                .then(response => response.text())
+                .then(html => {
+                    if (ul_element) {
+                        ul_element.outerHTML = html;
+                    }
+                })
+                .catch(error => {
+                    showNotification("Failed to retireive children.", 'error');
+                    console.error('Error:', error)
+                });
+        }
     }
 
     function toggleArrow(svg) {

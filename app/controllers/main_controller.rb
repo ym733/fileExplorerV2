@@ -1,9 +1,8 @@
 class MainController < ApplicationController
   def index
-    root_directory_path = Dir.home
+    @root_directory_path = Dir.home
 
-    flash[:current_path] = Dir.home
-    @tree = directory_tree root_directory_path
+    flash[:current_path] = @root_directory_path
   end
 
   def refresh_file
@@ -204,8 +203,15 @@ class MainController < ApplicationController
     send_file(
       file_path,
       filename: File.basename(file_path),
-      disposition: 'attachment'
+      disposition: "attachment"
     )
+  end
+
+  def children
+    item_path = params[:item_path]
+    children_parsed = directory_tree(item_path)
+
+    render partial: "shared/directory_tree", locals: { tree: children_parsed }
   end
 
   #==============================================================
@@ -218,20 +224,11 @@ class MainController < ApplicationController
       item_path = File.join(path, item)
       next if item[0] == '.' && File.directory?(item_path) # rubocop:disable Style/StringLiterals
 
-      if File.directory?(item_path)
-        items << {
-          name: item,
-          item_path: item_path,
-          type: "directory",
-          children: directory_tree(item_path)
-        }
-      else
-        items << {
-          name: item,
-          item_path: item_path,
-          type: "file"
-        }
-      end
+      items << {
+        name: item,
+        item_path: item_path,
+        type: File.directory?(item_path) ? "directory" : "file"
+      }
     end
     items.sort_by { |item| item[:name].downcase }
   end
