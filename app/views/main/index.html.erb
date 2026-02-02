@@ -3,6 +3,7 @@
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <h3>Directory Tree</h3>
+            <button type="button" id="refresh-tree" onclick="refreshDirectoryTree('<%= @root_directory_path %>', this.parentElement.nextElementSibling.querySelector('li.directory > ul'));" class="btn btn-outline-secondary btn-sm"><i class="fas fa-sync-alt"></i></button>
         </div>
 
         <div class="directory-tree" id="directory-tree">
@@ -20,7 +21,7 @@
                         class: "btn btn-plain-text name text-nowrap",
                         form: { data: { turbo_frame: "file-grid" } }
                     %>
-                    <ul class="directory-tree"></ul>
+                    <ul class="directory-tree" id="root-directory-list"></ul>
                 </li>
             </ul>
         </div>
@@ -117,6 +118,37 @@
                     console.error('Error:', error)
                 });
         }
+    }
+
+    function refreshDirectoryTree(path, ul_element) {
+        while (ul_element.firstChild) {
+            ul_element.removeChild(ul_element.firstChild);
+        }
+
+        if (ul_element) {
+            ul_element.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span> Retrieving chrildren </span>`
+        }
+
+        fetch(`/children?item_path=${encodeURIComponent(path)}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content,
+                }
+            })
+            .then(response => response.text())
+            .then(html => {
+                if (ul_element) {
+                    html.id = "root-directory-list";
+                    console.log(html.id);
+                    console.log(html)
+                    ul_element.outerHTML = html;
+                }
+            })
+            .catch(error => {
+                showNotification("Failed to retireive children.", 'error');
+                console.error('Error:', error)
+            });
     }
 
     function toggleArrow(svg) {
