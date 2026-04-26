@@ -46,10 +46,10 @@ class MainController < ApplicationController
 
   def file
     @is_text = text_file?(params[:item_path])
-    extension = File.extname(params[:item_path]).delete_prefix(".").downcase
+    @extension = File.extname(params[:item_path]).delete_prefix(".").downcase
 
-    if extension == ""
-      extension = File.basename(params[:item_path]).downcase
+    if @extension == ""
+      @extension = File.basename(params[:item_path]).downcase
     end
 
     @item_path = params[:item_path]
@@ -57,7 +57,12 @@ class MainController < ApplicationController
     if @is_text
       @text = File.read(params[:item_path])
 
-      @language = prog_language(extension)
+      @language = prog_language(@extension)
+    end
+
+    image_extensions = %w[png jpg jpeg gif webp svg bmp ico]
+    if image_extensions.include?(@extension.downcase)
+      @image = Base64.strict_encode64(File.read(@item_path, binmode: true))
     end
 
     flash[:current_path] = @item_path

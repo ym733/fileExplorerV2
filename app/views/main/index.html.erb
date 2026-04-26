@@ -209,3 +209,249 @@
     let canSave = true;
     let editor = null;
 </script>
+
+
+<script>
+    // THIS IS THE /new_file IMPLMENTATION
+
+    document.getElementById('create-folder').addEventListener('click', function() {
+        this.disabled = true;
+        showCreateDialog('folder');
+        setTimeout(() => this.disabled = false, 300);
+    });
+
+    document.getElementById('create-file').addEventListener('click', function() {
+        this.disabled = true;
+        showCreateDialog('file');
+        setTimeout(() => this.disabled = false, 300);
+    });
+
+    function showCreateDialog(type) {
+        const modal = document.createElement('div');
+        modal.className = 'modal fade show';
+        modal.style.display = 'block';
+        modal.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+
+        modal.innerHTML = `
+        <div class="modal-dialog">
+            <div class="modal-content" style="background-color: var(--bg-primary); color: var(--text-primary); border-color: var(--border-color);">
+                <div class="modal-header" style="border-color: var(--border-color);">
+                    <h5 class="modal-title">Create New ${type === 'folder' ? 'Folder' : 'File'}</h5>
+                    <button type="button" class="btn-close" data-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" class="form-control" id="item-name" 
+                           placeholder="Enter ${type} name" 
+                           style="background-color: var(--bg-secondary); color: var(--text-primary); border-color: var(--border-color);">
+                </div>
+                <div class="modal-footer" style="border-color: var(--border-color);">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="confirm-create">Create</button>
+                </div>
+            </div>
+        </div>`;
+
+        document.body.appendChild(modal);
+        document.getElementById('item-name').focus();
+
+        const closeModal = () => {
+            modal.remove();
+        };
+
+        modal.querySelectorAll('[data-dismiss="modal"]').forEach(btn => {
+            btn.addEventListener('click', closeModal);
+        });
+
+        document.getElementById('confirm-create').addEventListener('click', function() {
+            const name = document.getElementById('item-name').value.trim();
+            if (name) {
+                createItem(type, name);
+                closeModal();
+            }
+        });
+
+        document.getElementById('item-name').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const name = this.value.trim();
+                if (name) {
+                    createItem(type, name);
+                    closeModal();
+                }
+            }
+        });
+    }
+
+    function createItem(type, name) {
+        fetch('/new_file', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
+                },
+                body: JSON.stringify({
+                    item_type: type,
+                    name: name
+                })
+            })
+            .then(response => response.text())
+            .then(html => {
+                const fileGrid = document.getElementById('file-grid');
+                if (fileGrid) {
+                    fileGrid.outerHTML = html;
+                }
+                showNotification(`Item created successfully.`, 'success');
+            })
+            .catch(error => {
+                showNotification("Failed to create item.", 'error');
+                console.error('Error:', error)
+            });
+    }
+</script>
+
+<script>
+    // THIS IS THE /upload IMPLMENTATION
+
+    document.getElementById('upload-file').addEventListener('click', function() {
+        this.disabled = true;
+        showUploadDialog();
+        setTimeout(() => this.disabled = false, 300);
+    });
+
+    function showUploadDialog() {
+
+        console.log("upload file")
+
+        const modal = document.createElement('div');
+        modal.className = 'modal fade show';
+        modal.style.display = 'block';
+        modal.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+
+        modal.innerHTML = `
+        <div class="modal-dialog">
+            <div class="modal-content" style="background-color: var(--bg-primary); color: var(--text-primary); border-color: var(--border-color);">
+                <div class="modal-header" style="border-color: var(--border-color);">
+                    <h5 class="modal-title">Upload File</h5>
+                    <button type="button" class="btn-close" data-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="file" class="form-control" id="file-input" 
+                           style="background-color: var(--bg-secondary); color: var(--text-primary); border-color: var(--border-color);">
+                </div>
+                <div class="modal-footer" style="border-color: var(--border-color);">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="confirm-upload">Upload</button>
+                </div>
+            </div>
+        </div>`;
+
+        document.body.appendChild(modal);
+
+        const closeModal = () => {
+            modal.remove();
+        };
+
+        modal.querySelectorAll('[data-dismiss="modal"]').forEach(btn => {
+            btn.addEventListener('click', closeModal);
+        });
+
+        document.getElementById('confirm-upload').addEventListener('click', function() {
+            const fileInput = document.getElementById('file-input');
+            const file = fileInput.files[0];
+            if (file) {
+                uploadFile(file);
+                closeModal();
+            }
+        });
+    }
+
+    function uploadFile(file) {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        fetch('/upload', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content,
+                },
+                body: formData
+            })
+            .then(response => response.text())
+            .then(html => {
+                const fileGrid = document.getElementById('file-grid');
+                if (fileGrid) {
+                    fileGrid.outerHTML = html;
+                }
+                showNotification(`Item uploaded successfully.`, 'success');
+            })
+            .catch(error => {
+                showNotification("Failed to upload item.", 'error');
+                console.error('Error:', error)
+            });
+    }
+</script>
+
+<script>
+    // THIS IS THE /delete_file IMPLMENTATION
+
+    function delete_file(item_path) {
+        const modal = document.createElement('div');
+        modal.className = 'modal fade show';
+        modal.style.display = 'block';
+        modal.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+
+        modal.innerHTML = `
+        <div class="modal-dialog">
+            <div class="modal-content" style="background-color: var(--bg-primary); color: var(--text-primary); border-color: var(--border-color);">
+                <div class="modal-header" style="border-color: var(--border-color);">
+                    <h5 class="modal-title">Delete Item</h5>
+                    <button type="button" class="btn-close" data-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this item?</p>
+                    <p style="color: var(--text-secondary); font-size: 0.9em;">${item_path}</p>
+                </div>
+                <div class="modal-footer" style="border-color: var(--border-color);">
+                    <button type="button" class="btn btn-danger" id="confirm-delete">Delete</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    `;
+
+        document.body.appendChild(modal);
+
+        const closeModal = () => {
+            modal.remove();
+        };
+
+        modal.querySelectorAll('[data-dismiss="modal"]').forEach(btn => {
+            btn.addEventListener('click', closeModal);
+        });
+
+        document.getElementById('confirm-delete').addEventListener('click', function() {
+            fetch('/delete_file', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content,
+                    },
+                    body: JSON.stringify({
+                        item_path: item_path
+                    })
+                })
+                .then(response => response.text())
+                .then(html => {
+                    const fileGrid = document.getElementById('file-grid');
+                    if (fileGrid) {
+                        fileGrid.outerHTML = html;
+                    }
+                    closeModal();
+                    showNotification(`Item deleted successfully.`, 'success');
+                })
+                .catch(error => {
+                    showNotification("Failed to delete item.", 'error');
+                    console.error('Error:', error)
+                });
+        });
+    }
+</script>
