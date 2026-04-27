@@ -27,16 +27,21 @@ class MainController < ApplicationController
 
     else
       @is_text = text_file?(flash[:current_path])
-      extension = File.extname(flash[:current_path]).delete_prefix(".").downcase
+      @extension = File.extname(flash[:current_path]).delete_prefix(".").downcase
 
-      if extension == ""
-        extension = File.basename(flash[:current_path]).downcase
+      if @extension == ""
+        @extension = File.basename(flash[:current_path]).downcase
       end
 
       if @is_text
         @text = File.read(flash[:current_path])
 
-        @language = prog_language(extension)
+        @language = prog_language(@extension)
+      end
+
+      image_extensions = %w[png jpg jpeg gif webp svg bmp ico]
+      if image_extensions.include?(@extension.downcase)
+        @image = Base64.strict_encode64(File.read(path, binmode: true))
       end
 
       flash[:current_path] = path

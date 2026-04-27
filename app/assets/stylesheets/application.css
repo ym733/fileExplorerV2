@@ -259,6 +259,8 @@ textarea:focus {
     border-color: var(--selected-border) !important;
 }
 
+.hidden{display:none!important}
+
 /* CODE MIRROR CHANGES FOR LIGHT/DARK THEME */
 
 /* CodeMirror Base Styles */

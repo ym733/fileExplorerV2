@@ -78,8 +78,56 @@
   <div class="d-flex justify-content-center flex-column align-items-center" style="margin:auto">
     <% if @image %>
     <div id="zi">
-        <img src="data:image/<%= @extension.downcase %>;base64,<%= @image %>" style="max-height:100vh">
+        <img src="data:image/<%= @extension.downcase %>;base64,<%= @image %>" style="max-height:80vh;cursor:zoom-in" onclick="document.getElementById('zo').classList.remove('hidden')">
+        <div id="zo" class="hidden" style="position:fixed;inset:0;background:#000000d9;display:flex;align-items:center;justify-content:center;z-index:1000;cursor:zoom-out">
+            <div id="zj">
+                <img src="data:image/<%= @extension.downcase %>;base64,<%= @image %>" style="max-width:90vw;max-height:90vh;object-fit:contain">
+            </div>
+        </div>
     </div>
+
+    <script>
+        var zj = document.getElementById('zj');
+        var zo = document.getElementById('zo');
+        var scale = 1, x = 0, y = 0, dragging = false, startX, startY;
+
+        zj.querySelector('img').addEventListener('dragstart', e => e.preventDefault());
+
+        zo.addEventListener('wheel', function(e) {
+            e.preventDefault();
+            scale = Math.min(Math.max(scale + (e.deltaY < 0 ? 0.1 : -0.1), 0.5), 5);
+            zj.style.transform = `scale(${scale}) translate(${x}px, ${y}px)`;
+        }, { passive: false });
+
+        zj.addEventListener('mousedown', function(e) {
+            e.stopPropagation();
+            dragging = true;
+            startX = e.clientX - x;
+            startY = e.clientY - y;
+            zj.style.cursor = 'grabbing';
+        });
+
+        window.addEventListener('mousemove', function(e) {
+            if (!dragging) return;
+            x = e.clientX - startX;
+            y = e.clientY - startY;
+            zj.style.transform = `scale(${scale}) translate(${x}px, ${y}px)`;
+        });
+
+        window.addEventListener('mouseup', function() {
+            dragging = false;
+            zj.style.cursor = 'grab';
+        });
+
+        zo.addEventListener('click', function(e) {
+            if (e.target === zo) {
+                scale = 1; x = 0; y = 0;
+                zj.style.transform = 'scale(1) translate(0, 0)';
+                this.classList.add('hidden');
+            }
+        });
+    </script>
+            
     <% else %>
     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mb-2">
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -90,8 +138,6 @@
     <% end %>
   </div>
 </div>
-
-<style>.hidden{display:none!important}</style>
 
 <script>
   ['save-button','upload-file','create-file','create-folder'].forEach(id => document.getElementById(id).style.display = 'none');
