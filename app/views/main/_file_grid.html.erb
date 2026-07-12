@@ -127,7 +127,13 @@
             }
         });
     </script>
-            
+
+    <% elsif @is_video %>
+
+    <video controls style="max-height:80vh; max-width:100%; width:auto; height:auto;">
+        <source src="<%= stream_path(item_path: @item_path) %>" type="<%= Rack::Mime.mime_type(".#{@extension}") %>">
+    </video>
+                
     <% else %>
     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mb-2">
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>

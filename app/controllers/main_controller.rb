@@ -70,6 +70,9 @@ class MainController < ApplicationController
       @image = Base64.strict_encode64(File.read(@item_path, binmode: true))
     end
 
+    video_extensions = %w[mp4 mov webm ogg m4v]
+    @is_video = video_extensions.include?(@extension.downcase)
+
     flash[:current_path] = @item_path
     render partial: "file_grid", status: :ok
   end
@@ -517,5 +520,49 @@ class MainController < ApplicationController
       mode: "",
       files: []
     }
+  end
+
+  def stream
+    item_path = params[:item_path]
+    extension = File.extname(item_path).delete_prefix(".").downcase
+
+    file_size = File.size(item_path)
+    content_type = Rack::Mime.mime_type(".#{extension}", "video/mp4")
+    range_header = request.headers["Range"]
+
+    response.headers["Accept-Ranges"] = "bytes"
+    response.headers["Content-Type"] = content_type
+
+    if range_header
+      match = range_header.match(/bytes=(\d*)-(\d*)/)
+      range_start = match[1].to_s.empty? ? 0 : match[1].to_i
+      range_end = match[2].to_s.empty? ? file_size - 1 : match[2].to_i
+      range_end = file_size - 1 if range_end > file_size - 1
+      length = range_end - range_start + 1
+
+      response.status = :partial_content
+      response.headers["Content-Range"] = "bytes #{range_start}-#{range_end}/#{file_size}"
+      response.headers["Content-Length"] = length.to_s
+
+      self.response_body = Enumerator.new do |yielder|
+        File.open(item_path, "rb") do |f|
+          f.seek(range_start)
+          remaining = length
+          while remaining > 0
+            chunk = f.read([1.megabyte, remaining].min)
+            break unless chunk
+            yielder << chunk
+            remaining -= chunk.bytesize
+          end
+        end
+      end
+    else
+      response.headers["Content-Length"] = file_size.to_s
+      self.response_body = Enumerator.new do |yielder|
+        File.open(item_path, "rb") do |f|
+          yielder << chunk while (chunk = f.read(1.megabyte))
+        end
+      end
+    end
   end
 end

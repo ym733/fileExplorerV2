@@ -33,4 +33,7 @@ Rails.application.routes.draw do
 
   # GET /children
   get "/children", to: "main#children"
+
+  # GET /stream
+  get "stream", to: "main#stream"
 end
