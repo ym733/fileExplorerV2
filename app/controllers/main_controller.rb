@@ -26,25 +26,30 @@ class MainController < ApplicationController
       render partial: "folder_view", status: :ok
 
     else
-      @is_text = text_file?(flash[:current_path])
-      @extension = File.extname(flash[:current_path]).delete_prefix(".").downcase
+      @is_text = text_file?(path)
+      @extension = File.extname(path).delete_prefix(".").downcase
 
       if @extension == ""
-        @extension = File.basename(flash[:current_path]).downcase
+        @extension = File.basename(path).downcase
       end
 
+      @item_path = path
+
       if @is_text
-        @text = File.read(flash[:current_path])
+        @text = File.read(path)
 
         @language = prog_language(@extension)
       end
 
       image_extensions = %w[png jpg jpeg gif webp svg bmp ico]
       if image_extensions.include?(@extension.downcase)
-        @image = Base64.strict_encode64(File.read(path, binmode: true))
+        @image = Base64.strict_encode64(File.read(@item_path, binmode: true))
       end
 
-      flash[:current_path] = path
+      video_extensions = %w[mp4 mov webm ogg m4v]
+      @is_video = video_extensions.include?(@extension.downcase)
+
+      flash[:current_path] = @item_path
       render partial: "file_grid", status: :ok
     end
   end
