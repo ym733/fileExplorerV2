@@ -140,8 +140,6 @@
             .then(html => {
                 if (ul_element) {
                     html.id = "root-directory-list";
-                    console.log(html.id);
-                    console.log(html)
                     ul_element.outerHTML = html;
                 }
             })
@@ -319,8 +317,6 @@
 
     function showUploadDialog() {
 
-        console.log("upload file")
-
         const modal = document.createElement('div');
         modal.className = 'modal fade show';
         modal.style.display = 'block';
@@ -416,7 +412,7 @@
                 </div>
             </div>
         </div>
-    `;
+        `;
 
         document.body.appendChild(modal);
 
