@@ -6,6 +6,11 @@ class MainController < ApplicationController
   end
 
   def refresh_file
+    unless request.headers["Turbo-Frame"].present?
+      redirect_to root_path
+      return
+    end
+    
     path = flash[:current_path]
 
     puts "PATH: #{path}"
@@ -55,6 +60,11 @@ class MainController < ApplicationController
   end
 
   def file
+    unless request.headers["Turbo-Frame"].present?
+      redirect_to root_path
+      return
+    end
+
     @is_text = text_file?(params[:item_path])
     @extension = File.extname(params[:item_path]).delete_prefix(".").downcase
 
@@ -83,6 +93,11 @@ class MainController < ApplicationController
   end
 
   def folder
+    unless params[:item_path]
+      redirect_to root_path
+      return
+    end
+
     @item_path = params[:item_path]
     directory_tree = directory_tree(@item_path)
     @is_empty = directory_tree.empty?
@@ -100,6 +115,11 @@ class MainController < ApplicationController
   end
 
   def save
+    unless request.xhr?
+      redirect_to root_path
+      return
+    end
+
     text_data = params[:'text_data']
     item_path = params[:'item_path']
 
@@ -116,6 +136,11 @@ class MainController < ApplicationController
   end
 
   def back
+    unless request.headers["Turbo-Frame"].present?
+      redirect_to root_path
+      return
+    end
+
     unless flash[:current_path] == Dir.home
       params[:item_path] = (flash[:current_path].split("/")[0...-1]).join("/")
     else
@@ -129,10 +154,6 @@ class MainController < ApplicationController
     current_path = flash[:current_path]
     item_type = params[:'item_type']
     item_name = params[:'name']
-
-    puts current_path # /home/ym733/emptyDir
-    puts item_type # file / folder
-    puts item_name # file.txt / fileExplorer
 
     if item_type == "folder"
 
@@ -214,9 +235,12 @@ class MainController < ApplicationController
   end
 
   def download_file
-    file_path = params[:file_path]
+    unless params[:file_path]
+      redirect_to root_path
+      return
+    end
 
-    puts file_path
+    file_path = params[:file_path]
 
     send_file(
       file_path,
@@ -226,6 +250,11 @@ class MainController < ApplicationController
   end
 
   def children
+    unless request.xhr?
+      redirect_to root_path
+      return
+    end
+
     item_path = params[:item_path]
     children_parsed = directory_tree(item_path)
 
@@ -235,6 +264,56 @@ class MainController < ApplicationController
   #==============================================================
   # BELLOW ARE TOOLS AND NOT ROUTES
   #==============================================================
+  def stream
+    unless params[:item_path]
+      redirect_to root_path
+      return
+    end
+
+    item_path = params[:item_path]
+    extension = File.extname(item_path).delete_prefix(".").downcase
+
+    file_size = File.size(item_path)
+    content_type = Rack::Mime.mime_type(".#{extension}", "video/mp4")
+    range_header = request.headers["Range"]
+
+    response.headers["Accept-Ranges"] = "bytes"
+    response.headers["Content-Type"] = content_type
+
+    if range_header
+      match = range_header.match(/bytes=(\d*)-(\d*)/)
+      range_start = match[1].to_s.empty? ? 0 : match[1].to_i
+      range_end = match[2].to_s.empty? ? file_size - 1 : match[2].to_i
+      range_end = file_size - 1 if range_end > file_size - 1
+      length = range_end - range_start + 1
+
+      response.status = :partial_content
+      response.headers["Content-Range"] = "bytes #{range_start}-#{range_end}/#{file_size}"
+      response.headers["Content-Length"] = length.to_s
+
+      self.response_body = Enumerator.new do |yielder|
+        File.open(item_path, "rb") do |f|
+          f.seek(range_start)
+          remaining = length
+          while remaining > 0
+            chunk = f.read([ 1.megabyte, remaining ].min)
+            break unless chunk
+            yielder << chunk
+            remaining -= chunk.bytesize
+          end
+        end
+      end
+    else
+      response.headers["Content-Length"] = file_size.to_s
+      self.response_body = Enumerator.new do |yielder|
+        File.open(item_path, "rb") do |f|
+          yielder << chunk while (chunk = f.read(1.megabyte))
+        end
+      end
+    end
+  end
+
+  private
 
   def directory_tree(path)
     items = []
@@ -525,49 +604,5 @@ class MainController < ApplicationController
       mode: "",
       files: []
     }
-  end
-
-  def stream
-    item_path = params[:item_path]
-    extension = File.extname(item_path).delete_prefix(".").downcase
-
-    file_size = File.size(item_path)
-    content_type = Rack::Mime.mime_type(".#{extension}", "video/mp4")
-    range_header = request.headers["Range"]
-
-    response.headers["Accept-Ranges"] = "bytes"
-    response.headers["Content-Type"] = content_type
-
-    if range_header
-      match = range_header.match(/bytes=(\d*)-(\d*)/)
-      range_start = match[1].to_s.empty? ? 0 : match[1].to_i
-      range_end = match[2].to_s.empty? ? file_size - 1 : match[2].to_i
-      range_end = file_size - 1 if range_end > file_size - 1
-      length = range_end - range_start + 1
-
-      response.status = :partial_content
-      response.headers["Content-Range"] = "bytes #{range_start}-#{range_end}/#{file_size}"
-      response.headers["Content-Length"] = length.to_s
-
-      self.response_body = Enumerator.new do |yielder|
-        File.open(item_path, "rb") do |f|
-          f.seek(range_start)
-          remaining = length
-          while remaining > 0
-            chunk = f.read([1.megabyte, remaining].min)
-            break unless chunk
-            yielder << chunk
-            remaining -= chunk.bytesize
-          end
-        end
-      end
-    else
-      response.headers["Content-Length"] = file_size.to_s
-      self.response_body = Enumerator.new do |yielder|
-        File.open(item_path, "rb") do |f|
-          yielder << chunk while (chunk = f.read(1.megabyte))
-        end
-      end
-    end
   end
 end

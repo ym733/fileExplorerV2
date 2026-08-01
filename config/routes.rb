@@ -36,4 +36,8 @@ Rails.application.routes.draw do
 
   # GET /stream
   get "stream", to: "main#stream"
+
+
+  # if route is 404 then redirect to root
+  match "*unmatched", to: redirect("/"), via: :all
 end
