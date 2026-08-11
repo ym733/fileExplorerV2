@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  cookie: MyString
+  IP: MyString
+  login_count: 1
+  expire_time: 2026-08-09 17:16:13
+
+two:
+  cookie: MyString
+  IP: MyString
+  login_count: 1
+  expire_time: 2026-08-09 17:16:13

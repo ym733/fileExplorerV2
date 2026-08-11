@@ -1,4 +1,12 @@
 class MainController < ApplicationController
+  before_action :check_session_expiration
+
+  private def check_session_expiration
+    if (not session[:last_seen_at]) || session[:last_seen_at] < 2.hours.ago
+      redirect_to access_denied_path
+    end
+  end
+
   def index
     @root_directory_path = Dir.home
 

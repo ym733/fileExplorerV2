@@ -1,0 +1,12 @@
+<turbo-frame id="mfa_qr_frame">
+  <h4 class="mb-4">Scan to Add MFA</h4>
+  <div class="mb-3 d-flex justify-content-center bg-white" style="padding-top: 0.5rem; padding-bottom: 0.5rem;">
+    <%= raw @qr_svg %>
+  </div>
+  <%= button_to "Reset MFA",
+    "/setup/reset_mfa_token",
+    method: :post,
+    class: "btn btn-action w-100",
+    form: { data: { turbo_frame: "mfa_qr_frame" } }
+  %>
+</turbo-frame>

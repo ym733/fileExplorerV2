@@ -1,0 +1,134 @@
+<div class="d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+
+  <div class="user-actions-card position-relative text-center p-5 rounded-3">
+
+    <button id="back-btn" type="button" class="btn btn-link position-absolute top-0 start-0 m-3 d-none" onclick="showDefaultPanel()">
+        <i class="fa-solid fa-angle-left fa-lg"></i>
+    </button>
+
+    <!-- Default: OTP form -->
+    <div id="default-panel">
+        <% if notice %>
+          <div class="alert alert-info p-0"><%= notice %></div>
+        <% end %>
+            
+        <% if @user_OTP_exists %>
+            <h4 class="">Access Denied</h4>
+            <p class="mb-4">Please Enter OTP to proceed</p>
+
+            <%= form_with url: "/setup/verify_OTP", method: :post, local: true do |f| %>
+            <div class="d-grid gap-3">
+                <%= f.text_field :otp,
+                    maxlength: 6,
+                    inputmode: "numeric",
+                    pattern: "\\d{6}",
+                    class: "form-control text-center",
+                    placeholder: "Enter 6-digit OTP",
+                    required: true %>
+                <%= f.submit "Verify OTP", class: "btn btn-action" %>
+            </div>
+            <% end %>
+
+        <% elsif @password_type == "admin" %>
+            <div class="alert alert-danger">admin sessions can't use an OTP, please click button below to enter password</div>
+
+        <% else %>
+            <div class="alert alert-info">your admin hasn't setup an OTP token yet, please contact them to set one up</div>
+        <% end %>
+
+        <div class="d-grid gap-3">
+            <button type="button" class="btn p-0 text-decoration-none" onclick="showPasswordPanel()" style="color: var(--text-primary);">Enter <%= @password_type %> Password</button>
+        </div>
+    </div>
+
+    <!-- Enter password form -->
+    <div id="enter-password-panel" class="d-none text-start">
+        <% if @password_type == "user" && !@user_password_exists %>
+            <div class="alert alert-info">your admin hasn't setup a user password yet, please contact them to set one up</div>
+
+        <% elsif @password_type == "admin" && !@admin_password_exists %>
+            <div class="alert alert-danger">you haven't setup an admin password yet, please create one using the documentation.</div>
+
+        <% else %>
+            <h4 class="mb-4 text-center">Enter Password</h4>
+
+            <%= form_with url: "/setup/verify_password", method: :post, local: true do |f| %>
+            <%= f.hidden_field :password_type, value: @password_type %>
+            <div class="mb-3">
+                <%= f.label :password, class: "form-label" %>
+                <%= f.password_field :password, class: "form-control", required: true %>
+            </div>
+            <%= f.submit "Verify Password", class: "btn btn-action w-100" %>
+            <% end %>
+        <% end %>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function showDefaultPanel() {
+    document.getElementById('default-panel').classList.remove('d-none');
+    document.getElementById('enter-password-panel').classList.add('d-none');
+    document.getElementById('back-btn').classList.add('d-none');
+  }
+
+  function showPasswordPanel() {
+    document.getElementById('default-panel').classList.add('d-none');
+    document.getElementById('enter-password-panel').classList.remove('d-none');
+    document.getElementById('back-btn').classList.remove('d-none');
+  }
+</script>
+
+<style>
+  .user-actions-card {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 0.5rem 1rem var(--shadow-color);
+    min-width: 340px;
+  }
+
+  .user-actions-card h4 {
+    color: var(--text-primary);
+  }
+
+  .form-label {
+    color: var(--text-secondary);
+  }
+
+  .form-control {
+    background-color: var(--bg-primary);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+  }
+
+  .form-control:focus {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    border-color: var(--selected-border);
+    box-shadow: 0 0 0 0.2rem var(--selected-bg);
+  }
+
+  .btn-action {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .btn-action:hover {
+    background-color: var(--hover-bg);
+    border-color: var(--selected-border);
+    color: var(--text-primary);
+  }
+
+  #back-btn {
+    color: var(--text-secondary);
+  }
+
+  #back-btn:hover {
+    color: var(--text-primary);
+  }
+</style>
