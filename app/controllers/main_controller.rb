@@ -18,7 +18,7 @@ class MainController < ApplicationController
       redirect_to root_path
       return
     end
-    
+
     path = flash[:current_path]
 
     puts "PATH: #{path}"
@@ -198,6 +198,11 @@ class MainController < ApplicationController
   end
 
   def upload
+    unless request.xhr?
+      redirect_to root_path
+      return
+    end
+
     current_path = flash[:current_path]
 
     if params[:file].present?
