@@ -62,6 +62,9 @@ class MainController < ApplicationController
       video_extensions = %w[mp4 mov webm ogg m4v]
       @is_video = video_extensions.include?(@extension.downcase)
 
+      pdf_extensions = %w[pdf]
+      @is_pdf = pdf_extensions.include?(@extension.downcase)
+
       flash[:current_path] = @item_path
       render partial: "file_grid", status: :ok
     end
@@ -95,6 +98,9 @@ class MainController < ApplicationController
 
     video_extensions = %w[mp4 mov webm ogg m4v]
     @is_video = video_extensions.include?(@extension.downcase)
+
+    pdf_extensions = %w[pdf]
+    @is_pdf = pdf_extensions.include?(@extension.downcase)
 
     flash[:current_path] = @item_path
     render partial: "file_grid", status: :ok
@@ -320,7 +326,9 @@ class MainController < ApplicationController
       response.headers["Content-Length"] = file_size.to_s
       self.response_body = Enumerator.new do |yielder|
         File.open(item_path, "rb") do |f|
-          yielder << chunk while (chunk = f.read(1.megabyte))
+          while (chunk = f.read(1.megabyte))
+            yielder << chunk
+          end
         end
       end
     end

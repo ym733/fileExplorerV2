@@ -76,7 +76,7 @@
 
 <% else %>
 <div class="file-grid" id="file-grid">
-  <div class="d-flex justify-content-center flex-column align-items-center" style="margin:auto">
+  <div class="d-flex justify-content-center flex-column align-items-center" style="margin: auto 0">
     <% if @image %>
     <div id="zi">
         <img src="data:image/<%= @extension.downcase %>;base64,<%= @image %>" style="max-height:80vh;cursor:zoom-in" onclick="document.getElementById('zo').classList.remove('hidden')">
@@ -134,6 +134,11 @@
     <video controls style="max-height:80vh; max-width:100%; width:auto; height:auto;">
         <source src="<%= stream_path(item_path: @item_path) %>" type="<%= Rack::Mime.mime_type(".#{@extension}") %>">
     </video>
+
+    <% elsif @is_pdf %>
+    <iframe src="<%= stream_path(item_path: @item_path) %>"
+            style="width:100%; height:80vh; border:none;">
+    </iframe>
                 
     <% else %>
     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mb-2">
