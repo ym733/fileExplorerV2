@@ -10,8 +10,8 @@
     <div id="default-panel">
       <h4 class="mb-4">User Actions</h4>
       <div class="d-grid gap-3">
-        <button type="button" class="btn btn-action" onclick="showResetPasswordPanel()">Reset User Password</button>
-        <%= button_to "Add MFA Phone",
+        <button type="button" class="btn btn-action" onclick="showResetPasswordPanel()">Setup/Reset Password</button>
+        <%= button_to "Add OTP Device",
             "/setup/get_MFA_QR",
             method: :post,
             class: "btn btn-action w-100",
@@ -23,7 +23,7 @@
 
     <!-- Reset password form -->
     <div id="reset-password-panel" class="d-none text-start">
-      <h4 class="mb-4 text-center">Reset Password</h4>
+      <h4 class="mb-4 text-center">Setup/Reset Password</h4>
       <%= form_with url: "/setup/reset_user_password", method: :post, local: true do |f| %>
         <div class="mb-3">
           <label class="form-label">New Password</label>
